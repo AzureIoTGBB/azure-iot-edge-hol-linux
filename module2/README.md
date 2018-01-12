@@ -38,7 +38,8 @@ nano readserial_nodevice.py
 ```Python
 connection_string = "<connection string here>"
 ```
-    put your connection string in the quotes.  Onto the end of your connection string, append ";GatewayHostName=mygateway.local".  This tells our Python script/device to connect to the specified IoTHub in it's connection string, but to do so __**through the specified Edge gateway**__
+
+put your connection string in the quotes.  Onto the end of your connection string, append ";GatewayHostName=mygateway.local".  This tells our Python script/device to connect to the specified IoTHub in it's connection string, but to do so __**through the specified Edge gateway**__
 
 Ok, we now have our device ready, so let's get it connected to the Hub
 
