@@ -202,12 +202,13 @@ As in the previous module, start the python script that represents our IoT Devic
 
 Once that is running, you can use "docker logs -f alertModule" (or whatever you named your module) to see its logs.  You won't see anything yet.
 
-Now hold your finger on the DHT22 temperature sensor to drive temp above 80.  Once it crosses above 80, you should see the Alert come through the docker logs for the alertModule, the DM call come through in the debug output of the python IoT Device.  If you release the temperature sensor and the temperature drops back below 80, you should see the process repeat to turn the alert back off.
+Watch the inputs from the python script.  Once the temperture crosses above 80, you should see the Alert come through the docker logs for the alertModule, and the DM call to turn the alert "ON" come through in the debug output of the python IoT Device. As the temperature drops back below 80, you should see the process repeat to turn the alert back off.
 
 In VS Code, under the "IOT HUB DEVICES" section, like before, you should be able to right click on your __**IoT Edge device**__ (note, this is different than before), and choose "Start Monitoring D2C Messages" and see the alert messages flow through to IoT Hub as well if you repeat the process.
 
 Congratulations - you now have:
-* data coming from a physical IoT device flowing into IoT Edge
+
+* data coming from a IoT device flowing into IoT Edge
 * an Edge module that intercepts and reformats that data
 * Streaming Analytics on the edge that pre-aggregates the data as well as generates "local" alerts when a dangerous high temperature situation occurs
 * a module that takes the 'high temp' alerts and uses them to invoke an action on the IoT Device in question.
