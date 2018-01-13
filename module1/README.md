@@ -2,7 +2,6 @@
 
 Created and maintained by the Microsoft Azure IoT Global Black Belts
 
-
 ## Create an IoT Hub and an "Edge Device"
 
 For the lab exercises, we need an IoT Hub created in an Azure Subscription for which you have administrative access.
@@ -12,6 +11,7 @@ Create an IoT Hub in your subscription by following the instructions [here](http
 While you are in the Azure portal, let's go ahead and grab a couple of important connection parameters and create an IoT Edge Device
 
 In the IoT Hub blade of the Azure portal for your created IoT Hub, do the following:
+
 * In the left-hand nav bar, click on "Shared Access Policies" and then click on "iothubowner", copy the "Connection String - Primary Key" string and paste it into Notepad.  We'll need it later.  This is your "IoTHub Owner Connection string".  Close the "Shared Access Policy" blade
 * In the left-hand nav bar, click on "IoT Edge Devices (preview)"
 * click "Add Edge Device"
@@ -55,9 +55,11 @@ Go get a cup of coffee.  Deployment will take approximately 5 minutes.
 ## Connect to your VM
 
 To connect to our VM, we need a terminal program.  If you already have one, feel free to use it.  If you don't, we recommend Putty.
+
 * You can download Putty [here](https://the.earth.li/~sgtatham/putty/latest/w32/putty.exe).  Just download and save to your desktop.
 
 We will connect to our new Linux box via it's public IP address.  To get the connection details:
+
 * in the Azure portal, if it didn't automatically take you there after provisision, then navigate to your new VM
 * on the Overview tab, click on "Connect"
 * note the connection details of your VM, which will be in the form \<username>@x.x.x.x where x.x.x.x is the public IP of your VM
@@ -74,7 +76,7 @@ In order to execute the hands-on labs, there are a number of pre-requisites that
 We want to make sure the install package list on our VM is up-to-date with the latest, so run
 
 ```bash
-sudo apt-get update
+$ sudo apt-get update
 ```
 
 ### install pip
@@ -84,7 +86,7 @@ The 'control' script for the Azure IoT Edge is based in python, and is supplied 
 to install pip, run
 
 ```bash
-sudo apt-get install python-pip
+$ sudo apt-get install python-pip
 ```
 
 ### install Docker for Linux
@@ -94,16 +96,15 @@ The IoT Edge modules are run and managed via Docker containers.  Ubuntu doesn't 
 To install docker, run the following commands:
 
 ```bash
-curl -fsSL get.docker.com -o get-docker.sh
-
-sudo sh get-docker.sh
+$ curl -fsSL get.docker.com -o get-docker.sh
+$ sudo sh get-docker.sh
 ```
 
 Once done, we want to add our account to the Docker admin group (so we don't have to use 'sudo' every time to interact with docker)
 
 Run:
 ```bash
-sudo usermod -aG docker \<your user name>
+$ sudo usermod -aG docker <your user name>
 ```
 
 Once the command has complete, you'll need to log out of your session ('exit') and re-connect as you did previously with Putty
@@ -113,8 +114,9 @@ Once the command has complete, you'll need to log out of your session ('exit') a
 The final prep step is to install the Azure IoT Edge control script.  Run the following command:
 
 ```bash
-sudo pip install -U azure-iot-edge-runtime-ctl
+$ sudo pip install -U azure-iot-edge-runtime-ctl
 ```
+
 ## Additional miscellaneous setup
 
 There are a few final steps needed to set up our specific lab scenario.  We are using our Edge device "as a gateway*, so we need a) our IoT Device to be able to find it and b) to have valid certificates so the IoT Device will open a successful TLS connection to the Edge
@@ -122,7 +124,7 @@ There are a few final steps needed to set up our specific lab scenario.  We are 
 * clone the "preview" branch of the Azure IoT C SDK (we need it to get to some scripts for generating certificates)
 
 ```bash
-git clone -b CACertToolEdge https://github.com/Azure/azure-iot-sdk-c
+$ git clone -b CACertToolEdge https://github.com/Azure/azure-iot-sdk-c
 ```
 
 * Add a host file entry for our Edge device -- this will let our "IoT Device" resolve and find our Edge gateway.  To do this:
@@ -142,35 +144,54 @@ from the bash command prompt
 * we need to copy the cert scripts here, so run these commands
 
 ```bash
-cp ~/azure-iot-sdk-c/tools/CACertificates/*.cnf .
-cp ~/azure-iot-sdk-c/tools/CACertificates/*.sh .
+$ cp ~/azure-iot-sdk-c/tools/CACertificates/*.cnf .
+$ cp ~/azure-iot-sdk-c/tools/CACertificates/*.sh .
 ```
 
 * make the certGen.sh script executable
 
 ```bash
-chmod 700 certGen.sh
+$ chmod 700 certGen.sh
 ```
 
-* next we need to create the certificate chain (root and intermediate certs) 
+* next we need to create the certificate chain (root and intermediate certs)
 
 ```bash
-./certGen.sh create_root_and_intermediate
+$ ./certGen.sh create_root_and_intermediate
 ```
 
 * we need to register our cert with IoT Hub, to do so:
+
     * you will need to get the cert from the linux VM to the local box.  You can ftp to the VM to pull it off it you need to.  The file you need is ./certs/azure-iot-test-only.root.ca.cert.pem
     * in the azure portal, navigate back to your IoT Hub and click on "Certificates" on the left-nav and click "+Add". Give your certificate a name, and upload the pem file
 * we are now ready to create our Edge device-specific certs.  To do so, run:
 
 ```bash
-./certGen.sh create_edge_device_certificate myGateway
+$ ./certGen.sh create_edge_device_certificate myGateway
 ```
 
 This creates the public key, private key, etc for the device.  Now we need to create the public key full chain, by running the following command from the 'certs' directory:
 
 ```bash
-cat ./new-edge-device.cert.pem /azure-iot-test-only.intermediate.cert.pem /azure-iot-test-only.root.ca.cert.pem > /new-edge-device-full-chain.cert.pem
+$ cat ./new-edge-device.cert.pem /azure-iot-test-only.intermediate.cert.pem /azure-iot-test-only.root.ca.cert.pem > /new-edge-device-full-chain.cert.pem
+```
+
+## install certs
+
+In order for our end IoT Device to connect to the gateway, it needs to trust the certs we just generated.  To do so, we need to install that cert.  To install it, 
+
+* run the following commands
+
+```bash
+$ cd ~/edge/certs
+$ openssl x509 -in azure-iot-test-only.root.ca.cert.pem -inform PEM -out azure-iot-test-only.root.ca.cert.crt
+$ sudo mkdir /usr/share/ca-certificates/extra
+$ sudo cp azure-iot-test-only.root.ca.cert.crt /usr/share/ca-certificates/extra/azure-iot-test-only.root.ca.cert.crt
+$ sudo dpkg-reconfigure ca-certificates
+```
+
+* with the last command, you will get a screen warning about installing certs to the root store.  Tab to and hit "ok"
+* on the next week, you'll be presented a list of certs that will be installed.  Make sure there is a "*" next to the azure iot one above, hit \<tab> to move to the "Ok" button, and hit \<enter>
 
 ## Configure and start IoT Edge
 
@@ -179,29 +200,29 @@ Now that we have all the pieces in place, we are ready to start up our IoT Edge 
 To setup and configure our IoT Edge device, run the following command  (if you used '1234' for the password above, enter it again here when prompted).
 
 ```bash 
-sudo iotedgectl setup --connection-string "<Iot Edge Device connection string>" --edge-hostname mygateway.local --device-ca-cert-file /home/stevebus/edge/certs/new-edge-device.cert.pem --device-ca-chain-cert-file /home/stevebus/edge/certs/new-edge-device-full-chain.cert.pem --device-ca-private-key-file /home/stevebus/edge/certs/private/new-edge-device.key.pem --owner-ca-cert-file /home/stevebus/edge/certs/azure-iot-test-only.root.ca.cert.pem
-    
+$ sudo iotedgectl setup --connection-string "<Iot Edge Device connection string>" --edge-hostname mygateway.local --device-ca-cert-file /home/stevebus/edge/certs/new-edge-device.cert.pem --device-ca-chain-cert-file /home/stevebus/edge/certs/new-edge-device-full-chain.cert.pem --device-ca-private-key-file /home/stevebus/edge/certs/private/new-edge-device.key.pem --owner-ca-cert-file /home/stevebus/edge/certs/azure-iot-test-only.root.ca.cert.pem
 ```
+
 Replace *IoT Edge Device connection string* with the Edge device connection string you captured above.  If it prompts you for a password for the edge private cert, use '12345'
 
 We're ready now to start our IoT Edge device
 
-```
-sudo iotedgectl start
+```bash
+$ sudo iotedgectl start
 ```
 
 You can see the status of the docker images by running 
 
-```
-docker ps
+```bash
+$ docker ps
 ```
 
 at this point (because we haven't added any modules to our Edge device yet), you should only see one container/module running called 'edgeAgent'
 
 If you want to see if the edge Agent successfully started, run
 
-```
-docker logs -f edgeAgent
+```bash
+$ docker logs -f edgeAgent
 ```
 
 Note that you may see an error in the edgeAgent logs about having an 'empty configuration'.  That's fine, because we haven't set a configuration yet!  :-)
