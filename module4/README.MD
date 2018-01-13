@@ -4,7 +4,7 @@ Created and maintained by the Microsoft Azure IoT Global Black Belts
 
 ## Introduction
 
-For this step of the lab, we are going to create an Azure Stream Analytics job that will run on our IoT Edge device.  Azure Stream Analytics (ASA) is our SQL-based near real time analytics engine. One of the great value propositions of running ASA on the Edge is that you can create and manage the ASA query in the cloud, and have it pushed to be executed on the Edge. 
+For this step of the lab, we are going to create an Azure Stream Analytics job that will run on our IoT Edge device.  Azure Stream Analytics (ASA) is our SQL-based near real time analytics engine. One of the great value propositions of running ASA on the Edge is that you can create and manage the ASA query in the cloud, and have it pushed to be executed on the Edge.
 
 For our use case, we are going to have the ASA job do two things concurrently:
 
@@ -16,6 +16,7 @@ For our use case, we are going to have the ASA job do two things concurrently:
 Our ASA job will be set up to take the messages produced by our formatter module in module 3 of the labs.
 
 An ASA job consists of three parts:
+
 * one or more "inputs", or sources of either streaming or reference data
 * one or more "outputs" or sinks for the query results
 * the "query" that represents the processing of the job, which takes data from the inputs, processes it, and writes the results to one or more outputs
@@ -61,7 +62,7 @@ GROUP BY
 -- determine if we are making a 'transition' above or below 80 degress
 SELECT *
 INTO   asaAlertTemp
-FROM   
+FROM
 (
     SELECT
         deviceID,
@@ -130,9 +131,8 @@ click 'next' and 'finish' to publish our routes.
 
 re-start the python script that represents our device.  Use "docker ps" and "docker logs -f \<module name>" to see the various debug messages from the modules
 
-If it is not still running, restart the D2C message monitoring within VS Code.  You should see the aggregated temperature data come through every 30 seconds or so.  If you hold your finger on the temperature sensor on the Arduinio device enough to make it go above (and then release and let it fall below) 80 degrees, you should also see the Alert messages come through to IoT Hub.
+If it is not still running, restart the D2C message monitoring within VS Code on your dev machine.  You should see the aggregated temperature data come through every 30 seconds or so.  The python script representing our IoT Device generates temperature data in a "sawtooth" pattern, so it will regularly go above and below 80.  When it does, you should see a temperature alert (high and low) in the ASA job's log as well.
 
 ## Summary
 
 So now we have ASA generating aggregated temperature/humidity data at a lower and less costly message rate to the cloud, and also doing local processing to generate temperture 'alerts'.  However, we are not yet taking action on those alerts.  We will do that in the next module (module 5).
-

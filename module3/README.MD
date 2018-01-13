@@ -6,7 +6,7 @@ Created and maintained by the Microsoft Azure IoT Global Black Belts
 
 For this step of the lab, we are going to create an IoT Edge module that take the raw CSV format provided by our IoT Device, converts it to JSON, and then puts the messages back on the edge Hub for further processing.
 
-We will develop our module in C# using .NET Core.   .NET Core is the cross-platform version of Microsoft's .NET framework.  The module and image we develop in this section can be used, unchanged, on x86/x64 based Linux distributions, and can be cross compiled for ARM distributions as well.
+We will develop our module in C# using .NET Core on our desktop development machines.   .NET Core is the cross-platform version of Microsoft's .NET framework.  The module and image we develop in this section can be used, unchanged, on x86/x64 based Linux distributions, and can be cross compiled for ARM distributions as well.  We will develop on Windows, and deploy directly to our Ubuntu edge device.
 
 We are primarily using C# and .NET Core for this lab because it is the most completely 'ready' language in terms of tooling at the time the labs are being written (during public preview).  However, by General Availability time for IoT Edge, you will be able to develop IoT Edge modules in any supported Azure IoT language, including C, C#, Java, Node, and Python.
 
@@ -119,7 +119,7 @@ Now that our module is created, we need to deploy it to our Edge device and get 
 
 The first step is to create our docker image.  Luckily the VS Code template makes that easy for us by creating the necessary DockerFile to create our image.  Since we are running linux containers on our Windows hosts, we need to build the Linux version of the image.
 
-* In VS Code, expand the Docker folder, and expand the Linux-x64 folder.  
+* In VS Code, expand the Docker folder, and expand the Linux-x64 folder.
 * Right-click on the DockerFile and click on "Build IoT Edge module Docker image"
 * in the pop-up folder dialog, navigate to the './bin/Debug/netcoreapp2.0/publish' folder under your project and click the "Select folder as EXE_DIR" button
 * in the pop-up text box at the top of VS Code, enter an image name.  You should start it with the name of the docker hub user id you created earlier.  For example:
@@ -130,9 +130,9 @@ The first step is to create our docker image.  Luckily the VS Code template make
 
 * hit enter to build your image
 
-Once the image is build, we want to upload it to docker so the edge Agent can pull it.   Technically, we don't have to do this, since edge is running on the same box in which we just created the image (i.e. it's already "local"), but it's a good habit to get into since you'll need to do it when Edge isn't running local to your development box
+Once the image is built, we want to upload it to docker so the edge Agent on our Edge device can pull it.
 
-the first step is to log into the docker hub.  Docker hub will let you download images anonymously, but you need to be authenticated to upload images.  
+the first step is to log into the docker hub.  Docker hub will let you download images anonymously, but you need to be authenticated to upload images.
 
 * From the Integrated Terminal in VS Code, enter the following command:
 
@@ -143,7 +143,7 @@ docker login -u <username> -p <password>
 where "username" and "password" are the credentials you used earlier when you created your docker hub account.
 
 * Once succesfully authenticated to docker, in VS Code, click View->Command Pallete and search for the Edge: Push IoT Edge module Docker Image command.
-* In the pop-up text box at the top of VS Code, enter the same image name you used above
+* In the pop-up text box at the top of VS Code, enter the same image name you used above and hit \<enter>
 
 
 ## Deploy Edge module
@@ -176,16 +176,17 @@ In this section, we will get the module created above deployed and view the resu
 
 ### Test our module
 
-After a few seconds, the module should be downloaded and deployed to our IoT Edge runtime.  You can confirm this by opening a command prompt and typing "docker ps".  You should see three modules running, the edgeAgent, edgeHub, and our new formatterModule.  You can view the logs of any of them by running "docker logs -f \<module name>" to make sure they are working.
+After a few seconds, the module should be downloaded and deployed to our IoT Edge runtime on the Edge device.  You can confirm this by switching back to your Putty session and typing "docker ps".  You should see three modules running, the edgeAgent, edgeHub, and our new formatterModule.  You can view the logs of any of them by running "docker logs -f \<module name>" to make sure they are working.
 
-As in the previous module, start the python script that represents our IoT Device to get messages flowing into our formatter module. 
+At this point, it can be useful to open a second Putty connection to our IoT Edge device.  That way you can run the python "IoT Device" in one, and look at logs, etc in the other.
+
+As in the previous module, start the python script that represents our IoT Device to get messages flowing into our formatter module.
 
 Once that is running, you can use "docker logs -f formatterModule" (or whatever you named your module) to see its logs.  You should see debug output indicating that it is receiving the CSV input, and outputing our new JSON module.
 
 In VS Code, under the "IOT HUB DEVICES" section, like before, you should be able to click on your __**IoT Edge device**__ (note, this is different than before), and choose "Start Monitoring D2C Messages" and see our new JSON formatted messages flowing.
 
 __**  NOTE:  Now that we have an edge module "in between" our IoT device and IoT Hub in the cloud, the messages no longer appears as though it comes from the original IoT Device, but rather from our Edge device now. This is an important distinction.  This is one of the reasons also, that our Formatter Module snags the original deviceID and embeds it in our message (we could have also put it in the user-defined metadata for the message).  Otherwise, the original device origin would be lost.**__
-
 
 Stop the python script (CTRL-C) while we work on the next module
 
