@@ -113,14 +113,13 @@ In the VS Code output window opened earlier, you should see messages flowing tho
 
 In VS Code, right click on your IoT Device and click on "Stop Monitoring D2C Messages".
 
-
 ### test Direct Method call
 
 Finally, we also want to test making a Direct Method call to our IoT Device.  Later, this functionality will allow us to respond to "high temperature" alerts by taking action on the device.  For now, we just want to test the connectivity to make sure that edgeHub is routing Direct Method calls propery to our device.  To test:
 
 * On the laptop, in VS Code, in the "IOT HUB DEVICES" section, right click on your IoT Device and click "Invoke Direct Method".
 * in the edit box at the top for the method to call type "ON" (without the quotes) and hit \<enter>
-* in the edit box for the payload, just hit \<enter>>, as we don't need a payload for our method
+* in the edit box for the payload, just hit \<enter>, as we don't need a payload for our method
 
 You should see debug output in the python script that is our IoT Device indicating that a DM call was made, and after a few seconds, the onboard LED on the device should light up.  This is a stand-in for whatever action we would want to take on our real device in the event of an "emergency" high temp alert.
 
@@ -128,6 +127,6 @@ You should see debug output in the python script that is our IoT Device indicati
 
 in the bash session runing your python script, hit CTRL-C to stop the script.
 
-## Summary 
+## Summary
 
 The output of module is still the raw output of the device (in CSV format).  We've shown that we can connect a device through the edgeHub to IoT Hub in the cloud.  In the next few labs, we will add modules to re-format the data as JSON, as well as aggregate the data and identify and take local action on "high temperature" alerts.

@@ -173,7 +173,7 @@ $ ./certGen.sh create_edge_device_certificate myGateway
 This creates the public key, private key, etc for the device.  Now we need to create the public key full chain, by running the following command from the 'certs' directory:
 
 ```bash
-$ cat ./new-edge-device.cert.pem /azure-iot-test-only.intermediate.cert.pem /azure-iot-test-only.root.ca.cert.pem > /new-edge-device-full-chain.cert.pem
+$ cat ./new-edge-device.cert.pem ./azure-iot-test-only.intermediate.cert.pem ./azure-iot-test-only.root.ca.cert.pem > ./new-edge-device-full-chain.cert.pem
 ```
 
 ## install certs
@@ -200,10 +200,10 @@ Now that we have all the pieces in place, we are ready to start up our IoT Edge 
 To setup and configure our IoT Edge device, run the following command  (if you used '1234' for the password above, enter it again here when prompted).
 
 ```bash 
-$ sudo iotedgectl setup --connection-string "<Iot Edge Device connection string>" --edge-hostname mygateway.local --device-ca-cert-file /home/stevebus/edge/certs/new-edge-device.cert.pem --device-ca-chain-cert-file /home/stevebus/edge/certs/new-edge-device-full-chain.cert.pem --device-ca-private-key-file /home/stevebus/edge/certs/private/new-edge-device.key.pem --owner-ca-cert-file /home/stevebus/edge/certs/azure-iot-test-only.root.ca.cert.pem
+$ sudo iotedgectl setup --connection-string "<Iot Edge Device connection string>" --edge-hostname mygateway.local --device-ca-cert-file /home/<your user id>/edge/certs/new-edge-device.cert.pem --device-ca-chain-cert-file /home/<your user id>/edge/certs/new-edge-device-full-chain.cert.pem --device-ca-private-key-file /home/<your user id>/edge/private/new-edge-device.key.pem --owner-ca-cert-file /home/<your user id>/edge/certs/azure-iot-test-only.root.ca.cert.pem
 ```
 
-Replace *IoT Edge Device connection string* with the Edge device connection string you captured above.  If it prompts you for a password for the edge private cert, use '12345'
+Replace *IoT Edge Device connection string* with the Edge device connection string you captured above.  Also, replace \<your user id> with your linux login user id.  If it prompts you for a password for the edge private cert, use '12345'
 
 We're ready now to start our IoT Edge device
 
