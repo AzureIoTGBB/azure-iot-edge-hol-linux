@@ -29,7 +29,7 @@ $ sudo ./build.sh
 Once the build is done, we need to copy over the compiled library to our solution folder
 
 ```bash
-$ cp ../../device/device/samples/iothub_client.so ~/azure-iot-edge-hol-linux/module2
+$ cp ../../device/samples/iothub_client.so ~/azure-iot-edge-hol-linux/module2
 ```
 ## create IoT Device in IoT Hub
 
