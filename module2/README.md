@@ -121,9 +121,9 @@ Finally, we also want to test making a Direct Method call to our IoT Device.  La
 * in the edit box at the top for the method to call type "ON" (without the quotes) and hit \<enter>
 * in the edit box for the payload, just hit \<enter>, as we don't need a payload for our method
 
-You should see debug output in the python script that is our IoT Device indicating that a DM call was made, and after a few seconds, the onboard LED on the device should light up.  This is a stand-in for whatever action we would want to take on our real device in the event of an "emergency" high temp alert.
+You should see debug output in the python script that is our IoT Device indicating that a DM call was made.  This is a stand-in for whatever action we would want to take on our real device in the event of an "emergency" high temp alert.
 
-* repeat the process above, sending "OFF" as the command to toggle the LED back off.
+* repeat the process above, sending "OFF" as the command to toggle the "alert" back off.
 
 in the bash session runing your python script, hit CTRL-C to stop the script.
 
