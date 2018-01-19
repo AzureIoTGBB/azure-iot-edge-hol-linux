@@ -10,6 +10,8 @@ We will develop our module in C# using .NET Core on our desktop development mach
 
 We are primarily using C# and .NET Core for this lab because it is the most completely 'ready' language in terms of tooling at the time the labs are being written (during public preview).  However, by General Availability time for IoT Edge, you will be able to develop IoT Edge modules in any supported Azure IoT language, including C, C#, Java, Node, and Python.
 
+TODO:  note about the alternate "linux only" version.....  ignore for now
+
 ## Developing our module
 
 ### Install the Azure IoT Edge extention
