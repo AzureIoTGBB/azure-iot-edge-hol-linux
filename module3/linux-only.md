@@ -172,7 +172,7 @@ To build the docker image, run the following code, after replacing \<your docker
 
 ```bash
 cd ~/edge
-docker build -f "./formatttermodule/Docker/linux-x64/Dockerfile" --build-arg EXE_DIR="./formattermodule/bin/Debug/netcoreapp2.0/publish" -t "<your docker user name>/listenermodule:latest" .
+docker build -f "./formattermodule/Docker/linux-x64/Dockerfile" --build-arg EXE_DIR="./formattermodule/bin/Debug/netcoreapp2.0/publish" -t "<your docker user name>/formattermodule:latest" .
 ```
 
 ## push our docker image
