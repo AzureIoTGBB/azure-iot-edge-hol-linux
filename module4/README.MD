@@ -137,4 +137,4 @@ If it is not still running, restart the D2C message monitoring within iothub-exp
 
 So now we have ASA generating aggregated temperature/humidity data at a lower and less costly message rate to the cloud, and also doing local processing to generate temperture 'alerts'.  However, we are not yet taking action on those alerts.  We will do that in the next module (module 5).
 
-To continue with Module 5, click [here](module5)
+To continue with Module 5, click [here](/module5)
