@@ -116,14 +116,14 @@ Now we are ready to deploy our ASA job to our Edge device.
 {
   "routes": {
     "toFormatterFromDevices": "FROM /messages/* WHERE NOT IS_DEFINED($connectionModuleId) INTO BrokeredEndpoint(\"/modules/formattermodule/inputs/input1\")",
-    "toASAJob": "FROM /messages/modules/formattermodule/outputs/output1 INTO BrokeredEndpoint(\"/modules/<asa-job-name>/inputs/inputFromHub\")",
-    "asaAlertsToIoTHub": "FROM /messages/modules/<asa-job-name>/outputs/asaAlertTemp INTO $upstream",
-    "asaAggrToIoTHub": "FROM /messages/modules/<asa-job-name>/outputs/asaAggregatedData INTO $upstream"
+    "toASAJob": "FROM /messages/modules/formattermodule/outputs/output1 INTO BrokeredEndpoint(\"/modules/edgeASAJob/inputs/inputFromHub\")",
+    "asaAlertsToIoTHub": "FROM /messages/modules/edgeASAJob/outputs/asaAlertTemp INTO $upstream",
+    "asaAggrToIoTHub": "FROM /messages/modules/edgeASAJob/outputs/asaAggregatedData INTO $upstream"
   }
 }
 ```
 
-* replace \<asa-job-name> above with the name of your ASA module (e.g. edgeASAJob)
+* replace "edgeASAJob" above with the name of your ASA module (if it was different than edgeASAJob).  Also, replace 'formattermodule' in the route JSON if you used a different name in module 3.
 
 click 'next' and 'finish' to publish our routes.
 
@@ -131,8 +131,10 @@ click 'next' and 'finish' to publish our routes.
 
 re-start the python script that represents our device.  Use "docker ps" and "docker logs -f \<module name>" to see the various debug messages from the modules
 
-If it is not still running, restart the D2C message monitoring within VS Code on your dev machine.  You should see the aggregated temperature data come through every 30 seconds or so.  The python script representing our IoT Device generates temperature data in a "sawtooth" pattern, so it will regularly go above and below 80.  When it does, you should see a temperature alert (high and low) in the ASA job's log as well.
+If it is not still running, restart the D2C message monitoring within iothub-explorer on your VM.  You should see the aggregated temperature data come through every 30 seconds or so.  The python script representing our IoT Device generates temperature data in a "sawtooth" pattern, so it will regularly go above and below 80.  When it does, you should see a temperature alert (high and low) in the ASA job's log as well.
 
 ## Summary
 
 So now we have ASA generating aggregated temperature/humidity data at a lower and less costly message rate to the cloud, and also doing local processing to generate temperture 'alerts'.  However, we are not yet taking action on those alerts.  We will do that in the next module (module 5).
+
+To continue with Module 5, click [here](module5)

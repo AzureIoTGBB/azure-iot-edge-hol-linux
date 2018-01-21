@@ -24,13 +24,6 @@ IoT Edge modules are pulled by the Edge runtime from a docker containder image r
 
 For Docker Hub, you need a Docker ID.  Create one by visting www.docker.com and clicking on "Create Docker ID" and following the instructions.  Remember the docker ID you create, as we'll use it later.  Generally, docker images are referred to in a three part name:  \<respository>/image:tag where "respository", if using Docker Hub, is just your Docker ID,  image is your image name, and tag is an optional "tag" you can use to have multiple images with the same name (often used for versioning)
 
-## Windows "Development box" setup
-
-We will be using our Windows desktops as development machines.  Make sure that you have the following pre-requisites installed on your dev machine.
-
-* [Visual Studio Code](https://code.visualstudio.com/)
-* [.NET Core SDK](https://www.microsoft.com/net/core#windowscmd)  (make sure this is version 2.x.x) or greater
-
 ## Set up Ubuntu VM in Azure
 
 * open http://portal.azure.com in your browser and log in with your azure credentials (which may have been provided to you, if you are attending a live session)
@@ -116,6 +109,26 @@ The final prep step is to install the Azure IoT Edge control script.  Run the fo
 ```bash
 $ sudo pip install -U azure-iot-edge-runtime-ctl
 ```
+
+### Install the iothub-explorer tool
+
+We will be using the iothub-explorer tool to spy on the messages being sent to IoT Hub in the cloud.  To install it, we first need to install Node.JS and NPM
+
+```bash
+$ sudo apt-get install nodejs
+
+$ sudo apt-get install npm
+```
+
+One that is done, we can install the iothub-explorer tool and test to make sure it's working ok by just dumping out the version
+
+```bash
+$ sudo npm install -g iothub-explorer
+
+$ iothub-explorer --version
+```
+
+the last command above should dump out a version 1.x.x where x may vary.
 
 ## Additional miscellaneous setup
 
@@ -231,3 +244,4 @@ CTRL-C to exit the logs when you are ready
 
 __**Congratulations -- you now have an IoT Edge device up and running and ready to use**__
 
+To continue with Module 2, click [here](module2)

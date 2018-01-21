@@ -6,8 +6,6 @@ Created and maintained by the Microsoft Azure IoT Global Black Belts
 
 For this step of the lab, we are going to create our "IoT Device".  Let's get started...
 
-TODO:  do we want to switch out VS Code for Device Explorer or IoTHub explorer??
-
 ## Create "IoT Device"
 
 For our device, we will leverage a python script that emulates our IoT Device.  The device leverages our python Azure IoT SDK to connect to the hub and sends temperature and humidity data to the Edge in a 'sawtooth' pattern  (so we can later test going above and below the 'threshold')
@@ -33,9 +31,11 @@ Once the build is done, we need to copy over the compiled library to our solutio
 ```bash
 $ cp ../../device/samples/iothub_client.so ~/azure-iot-edge-hol-linux/module2
 ```
+
 ## create IoT Device in IoT Hub
 
 * To represent our device in IoT Hub, we need to create an IoT Device
+
     * in the Azure portal, for your IoT Hub, click on "IoT Devices" in the left-nav  (note, this is different than the "IoT Edge Devices" we used previously)
     * click on "+Add Device" to add a new device.  Give the device a name and click "create"
     * capture (in notepad) the Connection String - Primary Key for your IoT device, we will need it in a moment
@@ -49,7 +49,7 @@ We need to fill in a couple of pieces of information into our python script.
 * Edit the script
 
 ```bash
-nano readserial_nodevice.py
+nano iotdevice.py
 ```
 
 * In the line below
@@ -94,9 +94,15 @@ The edge device is now ready for our device to connect.
 
 ### Monitor our IoT Hub
 
-On your development box, in VS Code, click on the 'Extensions' tab on the left nav.  Search for an install the "Azure IoT Toolkit" by Microsoft.  Once installed (reload VS Code, if necessary), click back on the folder view and you should see a new section called "IOT HUB DEVICES".  Hover over it and you should see three dots "...".  Click on that and click "Set IoT Hub Connection String".  You should see an Edit box appear for you to enter a connection string.  Go back to notepad where we copied the connection strings earlier, and copy/paste the "IoT Hub level" (the 'iothubowner') connection string from earlier into the VS Code edit box and hit ok.
+If you don't already have one, open an additional putty connection to your Edge device (so we can run our python script in the other)
 
-After a few seconds, a list of IoT Device should appear in that section.  Once it does, find the IoT Device (not the edge device) that is tied to your python script.  Right click on it and select "Start monitoring D2C messages".  This should open an output window in VS Code and show that it is listening for messages.
+In that new window, to monitor the IoT Hub traffic, we will us the monitor-events function of iothub-explorer, like this:
+
+```bash
+iothub-explorer monitor-events <IoT Device Name> -r --login "<IoTHub iothubowner connection string>"
+```
+
+where \<IoT Device Name> is the name of your IoT device (as originally creatd in the Azure Portal and used in our python script) and \<IoTHub iothubowner connection string> is the IoT Hub-leve connection string retrieved and stored earlier in Notepad.  After running the command, it should say "Monitoring events from device \<IoT Device Name>..."  No events will be shown yet, as we haven't started our IoT Device yet
 
 ### start the local IoT device
 
@@ -104,24 +110,26 @@ Back on the edge device, run the following commands to 'run' our IoT device
 
 ```bash
 $ cd ~/azure-iot-edge-hol-linux/module2
-$ python -u readserial_nodevice.py
+$ python -u iotdevice.py
 ```
 
 You should see debug output indicating that the device was connected to the "IoT Hub" (in actuality it is connected to the edge device) and see it starting sending humidity and temperature messages.
 
 ### Observe D2C messages
 
-In the VS Code output window opened earlier, you should see messages flowing thought the hub.  These messages have come from the device, to the local Edge Hub and been forwarded to the cloud based IoT Hub in a store-and-forward fashion (i.e. transparent gateway).  Please note that there may be some delay before you see data in the monitor.
+In the iothub-explorer output window opened earlier, you should see messages flowing though the hub.  These messages have come from the device, to the local Edge Hub and been forwarded to the cloud based IoT Hub in a store-and-forward fashion (i.e. transparent gateway).  Please note that there may be some delay before you see data in the monitor.
 
-In VS Code, right click on your IoT Device and click on "Stop Monitoring D2C Messages".
+hit CTRL-C to stop monitoring.
 
 ### test Direct Method call
 
 Finally, we also want to test making a Direct Method call to our IoT Device.  Later, this functionality will allow us to respond to "high temperature" alerts by taking action on the device.  For now, we just want to test the connectivity to make sure that edgeHub is routing Direct Method calls propery to our device.  To test:
 
-* On the laptop, in VS Code, in the "IOT HUB DEVICES" section, right click on your IoT Device and click "Invoke Direct Method".
-* in the edit box at the top for the method to call type "ON" (without the quotes) and hit \<enter>
-* in the edit box for the payload, just hit \<enter>, as we don't need a payload for our method
+```
+ iothub-explorer device-method <IoT Device> "ON" --login "<IoTHub iothubowner connection string>"
+```
+
+where \<IoT Device> is the name of your IoT device (as originally creatd in the Azure Portal  -- this is the name used for your python script!) and \<IoTHub iothubowner connection string> is the IoT Hub-leve connection string retrieved and stored earlier in Notepad.
 
 You should see debug output in the python script that is our IoT Device indicating that a DM call was made.  This is a stand-in for whatever action we would want to take on our real device in the event of an "emergency" high temp alert.
 
@@ -132,3 +140,5 @@ in the bash session runing your python script, hit CTRL-C to stop the script.
 ## Summary
 
 The output of module is still the raw output of the device (in CSV format).  We've shown that we can connect a device through the edgeHub to IoT Hub in the cloud.  In the next few labs, we will add modules to re-format the data as JSON, as well as aggregate the data and identify and take local action on "high temperature" alerts.
+
+To continue with Module 3, click [here](module3)
