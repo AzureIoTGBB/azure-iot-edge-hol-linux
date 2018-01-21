@@ -1,4 +1,3 @@
-#import serial
 import time
 
 import iothub_client
@@ -101,9 +100,6 @@ def GetNextHumidity():
 
 
 while 1:
-#    serial_line = ser.readline()
-#    print(serial_line)
-
     curr_temp = GetNextTemp()
     curr_humidity = GetNextHumidity()
 
@@ -117,7 +113,5 @@ while 1:
 
     i=i+1
 
-    time.sleep(2)
-
-#ser.close() # Only executes once the loop exits
+    time.sleep(3)
 
