@@ -15,21 +15,21 @@ For our device, we will leverage a python script that emulates our IoT Device.  
 * Because we are in public preview with IoT Edge, we need to leverage a preview version of the python SDK.  To install that preview version, we need to clone it (the modules-preview branch) build it.  To start, from your home folder (cd ~):
 
 ```bash
-$ git clone --recursive -b modules-preview http://github.com/azure/azure-iot-sdk-python
-$ cd ~/azure-iot-sdk-python/build_all/linux
-$ sudo ./setup.sh
+git clone --recursive -b modules-preview http://github.com/azure/azure-iot-sdk-python
+cd ~/azure-iot-sdk-python/build_all/linux
+sudo ./setup.sh
 ```
 
 After setup.sh completes, we need to build the SDK.  To do so, run
 
 ```bash
-$ sudo ./build.sh
+sudo ./build.sh
 ```
 
 Once the build is done, we need to copy over the compiled library to our solution folder
 
 ```bash
-$ cp ../../device/samples/iothub_client.so ~/azure-iot-edge-hol-linux/module2
+cp ../../device/samples/iothub_client.so ~/azure-iot-edge-hol-linux/module2
 ```
 
 ## create IoT Device in IoT Hub
@@ -109,8 +109,8 @@ where \<IoT Device Name> is the name of your IoT device (as originally creatd in
 Back on the edge device, run the following commands to 'run' our IoT device
 
 ```bash
-$ cd ~/azure-iot-edge-hol-linux/module2
-$ python -u iotdevice.py
+cd ~/azure-iot-edge-hol-linux/module2
+python -u iotdevice.py
 ```
 
 You should see debug output indicating that the device was connected to the "IoT Hub" (in actuality it is connected to the edge device) and see it starting sending humidity and temperature messages.

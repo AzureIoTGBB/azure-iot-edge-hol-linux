@@ -42,7 +42,7 @@ CTRL-O, \<enter>, and CTRL-X to save and exit
 After saving the alertmodule.csproj file,  run 
 
 ```bash
-$ dotnet restore
+dotnet restore
 ```
 
 to download and install the new Nuget package for the Azure IoT Service Client.
