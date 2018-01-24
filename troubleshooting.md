@@ -30,7 +30,7 @@ Of all of these, 'docker logs -f \<container name>' is your best friend.  It sho
 
 _*Restarting/Resetting Docker:*_
 
-Sometimes Docker can get in a weird state.  We've seen this a few times when a machine sleeps or hibernates.  One thing, short of a reboot, that you can do (after stopping Edge!) is to right click on the whale in your notification area, click 'settings", click on the 'reset' tab, and click "Restart Docker".  If that doesn't work, "Reset to Factory Defaults" is another good option.  The need for this doesn't happen often, but has happened.
+Sometimes Docker can get in a weird state.  We've seen this a few times when a machine sleeps or hibernates, or possibly sunspots occur.  One thing, short of a reboot, that you can do (after stopping Edge!) is to right click on the docker "whale" in your notification area, click 'settings", click on the 'reset' tab, and click "Restart Docker".  If that doesn't work, "Reset to Factory Defaults" is another good option.  The need for this doesn't happen often, but has happened.
 
 ### Lab troubleshooting tips
 
