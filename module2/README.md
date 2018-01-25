@@ -6,6 +6,15 @@ Created and maintained by the Microsoft Azure IoT Global Black Belts
 
 For this step of the lab, we are going to create our "IoT Device".  Let's get started...
 
+## Clone lab locally
+
+We need some of the module2 files later in this lab.  So let's go ahead and clone this github repository locally
+
+```bash
+cd ~
+git clone http://github.com/azureiotgbb/azure-iot-edge-hol-linux
+```
+
 ## Create "IoT Device"
 
 For our device, we will leverage a python script that emulates our IoT Device.  The device leverages our python Azure IoT SDK to connect to the hub and sends temperature and humidity data to the Edge in a 'sawtooth' pattern  (so we can later test going above and below the 'threshold')
