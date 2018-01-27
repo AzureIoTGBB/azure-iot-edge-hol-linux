@@ -25,7 +25,9 @@ For our device, we will leverage a python script that emulates our IoT Device.  
 
 ```bash
 git clone --recursive -b modules-preview http://github.com/azure/azure-iot-sdk-python
+
 cd ~/azure-iot-sdk-python/build_all/linux
+
 sudo ./setup.sh
 ```
 
@@ -53,11 +55,9 @@ cp ../../device/samples/iothub_client.so ~/azure-iot-edge-hol-linux/module2
 
 We need to fill in a couple of pieces of information into our python script.
 
-* cd to the ~/azure-iot-edge-hol-linux/module2 folder
-
-* Edit the script
-
 ```bash
+cd ~/azure-iot-edge-hol-linux/module2
+
 nano iotdevice.py
 ```
 
@@ -67,7 +67,7 @@ nano iotdevice.py
 connection_string = "<connection string here>"
 ```
 
-put your connection string in the quotes.  Onto the end of your connection string, append ";GatewayHostName=mygateway.local".  This tells our Python script/device to connect to the specified IoTHub in it's connection string, but to do so __**through the specified Edge gateway**__
+* put your connection string in the quotes.  Onto the end of your connection string, append __**";GatewayHostName=mygateway.local"**__.  This tells our Python script/device to connect to the specified IoTHub in it's connection string, but to do so __**through the specified Edge gateway**__
 
 Ok, we now have our device ready, so let's get it connected to the Hub
 
@@ -119,6 +119,7 @@ Back on the edge device, run the following commands to 'run' our IoT device
 
 ```bash
 cd ~/azure-iot-edge-hol-linux/module2
+
 python -u iotdevice.py
 ```
 

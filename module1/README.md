@@ -90,6 +90,7 @@ To install docker, run the following commands:
 
 ```bash
 curl -fsSL get.docker.com -o get-docker.sh
+
 sudo sh get-docker.sh
 ```
 
@@ -160,6 +161,7 @@ from the bash command prompt
 
 ```bash
 cp ~/azure-iot-sdk-c/tools/CACertificates/*.cnf .
+
 cp ~/azure-iot-sdk-c/tools/CACertificates/*.sh .
 ```
 
@@ -188,6 +190,8 @@ chmod 700 certGen.sh
 This creates the public key, private key, etc for the device.  Now we need to create the public key full chain, by running the following command from the 'certs' directory:
 
 ```bash
+cd certs
+
 cat ./new-edge-device.cert.pem ./azure-iot-test-only.intermediate.cert.pem ./azure-iot-test-only.root.ca.cert.pem > ./new-edge-device-full-chain.cert.pem
 ```
 
@@ -199,14 +203,26 @@ In order for our end IoT Device to connect to the gateway, it needs to trust the
 
 ```bash
 cd ~/edge/certs
+
 openssl x509 -in azure-iot-test-only.root.ca.cert.pem -inform PEM -out azure-iot-test-only.root.ca.cert.crt
+
 sudo mkdir /usr/share/ca-certificates/extra
+
 sudo cp azure-iot-test-only.root.ca.cert.crt /usr/share/ca-certificates/extra/azure-iot-test-only.root.ca.cert.crt
+
 sudo dpkg-reconfigure ca-certificates
 ```
 
-* with the last command, you will get a screen warning about installing certs to the root store.  Tab to and hit "ok"
-* on the next week, you'll be presented a list of certs that will be installed.  Make sure there is a "*" next to the azure iot one above, hit \<tab> to move to the "Ok" button, and hit \<enter>
+* with the last command, you will get a screen warning about installing certs to the root store.  Ensure that "yes" is highlighted and hit \<enter> to pick "Ok"
+* on the next screen, you'll be presented a list of certs that will be installed.  Make sure there is a "*" next to the azure iot cert from above (there probably is not, so hit the \<space bar> to toggle one on), then hit \<tab> to move to the "Ok" button, and hit \<enter>
+
+if you want to double check to see if the certs were installed, run
+
+```bash
+sudo cat /etc/ca-certificates.conf
+```
+
+at the bottom of the file, you should see "extra/azure-iot-test-only.root.ca.cert.crt"
 
 ## Configure and start IoT Edge
 
@@ -215,10 +231,12 @@ Now that we have all the pieces in place, we are ready to start up our IoT Edge 
 To setup and configure our IoT Edge device, run the following command  (if you used '1234' for the password above, enter it again here when prompted).
 
 ```bash 
+cd ~
+
 sudo iotedgectl setup --connection-string "<Iot Edge Device connection string>" --edge-hostname mygateway.local --device-ca-cert-file /home/<your user id>/edge/certs/new-edge-device.cert.pem --device-ca-chain-cert-file /home/<your user id>/edge/certs/new-edge-device-full-chain.cert.pem --device-ca-private-key-file /home/<your user id>/edge/private/new-edge-device.key.pem --owner-ca-cert-file /home/<your user id>/edge/certs/azure-iot-test-only.root.ca.cert.pem
 ```
 
-Replace *IoT Edge Device connection string* with the Edge device connection string you captured above.  Also, replace \<your user id> with your linux login user id.  If it prompts you for a password for the edge private cert, use '12345'
+Replace *IoT Edge Device connection string* with the Edge device connection string you captured above.  Also, replace \<your user id> with your linux login user id.  (hint: it's probably easier if you copy/paste from here into notepad first and you can search and replace with CTRL-H).  When you run the command, if it prompts you for a password for the edge private cert, use '12345'
 
 We're ready now to start our IoT Edge device
 
