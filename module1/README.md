@@ -107,7 +107,7 @@ Once the command has complete, you'll need to log out of your session ('exit') a
 
 ### Install the Azure IoT Edge control script
 
-The final prep step is to install the Azure IoT Edge control script.  Run the following command:
+The Azure IoT Edge control script gives us local control over configurating and running the Edge runtime.  To install the Azure IoT Edge control script.  Run the following command:
 
 ```bash
 sudo pip install -U azure-iot-edge-runtime-ctl
