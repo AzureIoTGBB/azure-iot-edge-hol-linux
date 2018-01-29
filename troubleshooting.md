@@ -34,17 +34,17 @@ Sometimes Docker can get in a weird state.  We've seen this a few times when a m
 
 ### Lab troubleshooting tips
 
-_*when i try to install the edge runtime control script with 'pip install -U azure-iot-edge-runtime-control', it tells me pip is not found*_
+_*General tips*_
 
-Make sure that c:\python27\scripts is in your path.  If not, add it and re-open your command prompt
+* check the case on everything!  module names, routes, etc are all CASE SENSITIVE.  If something is not connecting or data is not flowing, check the case between the module names and the routes.
+* if you aren't seeing data in the "D2C monitoring" in VS Code, make sure you are looking at the right device.  For module2, you should be looking at your "IoT Leaf Device" (i.e. the one from the python script).  For module 3 or subsequent modules, you should be monitoring your IoT *EDGE* device (because once we insert a module in between the device and IoT Hub, it becomes a different 'message' from a different source)
+* when it comes to troubleshooting, the first stop should be the docker logs for the modules.  We can't say this enough :-)
 
 _*when my IoT Device (python script) tries to connect to Edge, I get a TLS error or some other error*_
 
 * make sure you are running the pre-release version of the Python SDK.  If you run "pip list", you should see an entry for "azure-iothub-device-client (1.2.0.0b0)" 
 * Make sure that your GatewayHostName parameter is spelled correctly ('mygateway.local')
 * make sure you can 'ping' the hostname  (should resolve to 127.0.0.1)
-* make sure that the edge runtime was started with the right certs.  Open c:\programdata\azure-iot-edge\config\config.json and make sure the "certificates" section matches this:
-![edgecerts](/images/edgecerts.png)
 * make sure that the edgeHub is actually running and listening on port 8883.  run 'docker ps' to confirm (as in the image)
 ![edgeHubrunning](/images/edgeHubrunning.png)
 * finally, look in the edgeHub logs (docker logs -f edgeHub) for any errors
