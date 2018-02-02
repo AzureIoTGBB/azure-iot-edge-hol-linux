@@ -6,13 +6,14 @@ Created and maintained by the Microsoft Azure IoT Global Black Belts
 
 For the lab exercises, we need an IoT Hub created in an Azure Subscription for which you have administrative access.
 
-Create an IoT Hub in your subscription by following the instructions [here](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal)
+Create an IoT Hub in your subscription by following the instructions [here](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-create-through-portal).   NOTE:  you can stop after the section titled "Create the IoT Hub"  (i.e. BEFORE "Change the settings of the IoT Hub").  There is no need to go any further in those instructions after the IoT Hub is created.
 
 While you are in the Azure portal, let's go ahead and grab a couple of important connection parameters and create an IoT Edge Device
 
 In the IoT Hub blade of the Azure portal for your created IoT Hub, do the following:
 
-* In the left-hand nav bar, click on "Shared Access Policies" and then click on "iothubowner", copy the "Connection String - Primary Key" string and paste it into Notepad.  We'll need it later.  This is your "IoTHub Owner Connection string".  Close the "Shared Access Policy" blade
+* In the left-hand nav bar, click on "Shared Access Policies" and then click on "iothubowner", copy the "Connection String - Primary Key" string and paste it into Notepad.  We'll need it later.  This is your "IoTHub Owner Connection string".  (keep that in mind, or make a note next to it in Notepad, we will use it in subsequent labs).
+* Close the "Shared Access Policy" blade
 * In the left-hand nav bar, click on "IoT Edge Devices (preview)"
 * click "Add Edge Device"
 * Give your IoT Edge Device a name and click "Create"
@@ -177,7 +178,7 @@ chmod 700 certGen.sh
 ./certGen.sh create_root_and_intermediate
 ```
 
-* we need to register our cert with IoT Hub, to do so:
+* we need to register our cert with IoT Hub.  To do so:
 
     * you will need to get the cert from the linux VM to the local box.  You can ftp to the VM to pull it off it you need to.  The file you need is ./certs/azure-iot-test-only.root.ca.cert.pem
     * in the azure portal, navigate back to your IoT Hub and click on "Certificates" on the left-nav and click "+Add". Give your certificate a name, and upload the pem file

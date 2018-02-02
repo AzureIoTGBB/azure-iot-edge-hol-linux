@@ -48,8 +48,10 @@ cp ../../device/samples/iothub_client.so ~/azure-iot-edge-hol-linux/module2
 * To represent our device in IoT Hub, we need to create an IoT Device
 
     * in the Azure portal, for your IoT Hub, click on "IoT Devices" in the left-nav  (note, this is different than the "IoT Edge Devices" we used previously)
-    * click on "+Add Device" to add a new device.  Give the device a name and click "create"
-    * capture (in notepad) the Connection String - Primary Key for your IoT device, we will need it in a moment
+    * click on "+Add Device" to add a new device.  Give the device a name and click "create".
+    * Once the device is created, you'll see it appear in the list of IoT Devices.  Click on your device to bring up the details page.
+    * capture (in notepad) the Connection String - Primary Key for your IoT device, we will need it in a moment.  We call this the "IoT Device connection string" that we'll need shortly.
+    * NOTE that the device initially gets created in the 'Disabled' state.  Click on 'Enable' to enable your IoT Device.
 
 ## set connection details
 
@@ -64,7 +66,7 @@ nano iotdevice.py
 * In the line below
 
 ```Python
-connection_string = "<connection string here>"
+connection_string = "<IoT Device connection string here>"
 ```
 
 * put your connection string in the quotes.  Onto the end of your connection string, append __**";GatewayHostName=mygateway.local"**__.  This tells our Python script/device to connect to the specified IoTHub in it's connection string, but to do so __**through the specified Edge gateway**__
@@ -124,6 +126,10 @@ python -u iotdevice.py
 ```
 
 You should see debug output indicating that the device was connected to the "IoT Hub" (in actuality it is connected to the edge device) and see it starting sending humidity and temperature messages.
+
+Your output should look something like the below screenshot.  Note that the lines showing the data being sent are interspersed with confirmation messages that it was successfully sent.  If your output doesn't look like this (and is, for example, only showing the temp/humidity readings and no confirmation messages), then YOUR PYTHON SCRIPT IS NOT CORRECTLY WORKING WITH EDGE and you need to troubleshoot.
+
+![python_success](/images/python_success.png)
 
 ### Observe D2C messages
 
