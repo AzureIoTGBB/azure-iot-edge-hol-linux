@@ -193,13 +193,13 @@ After a few seconds, the module should be downloaded and deployed to our IoT Edg
 
 At this point, it can be useful to open a second Putty connection to our IoT Edge device.  That way you can run the .NET Core "IoT Device" in one, and look at logs, etc in the other.
 
-As in the previous module, start the .NET Core app that represents our IoT Device to get messages flowing into our formatter module.
+As in the previous module, start the python script (or .NET Core app) that represents our IoT Device to get messages flowing into our formatter module.
 
 Once that is running, you can use "docker logs -f formattermodule" (or whatever you named your module) to see its logs.  You should see debug output indicating that it is receiving the CSV input, and outputing our new JSON module.
 
 ### Monitor our IoT Hub
 
-If you don't already have one, open an additional putty connection to your Edge device (so we can run our .NET Core script in the other)
+If you don't already have one, open an additional putty connection to your Edge device (so we can run our python script/.NET Core app in the other)
 
 In that new window, to monitor the IoT Hub traffic, we will us the monitor-events function of iothub-explorer, like this:
 

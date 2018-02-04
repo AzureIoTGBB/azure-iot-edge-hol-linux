@@ -131,9 +131,9 @@ click 'next' and 'finish' to publish our routes.
 
 ## Test our module
 
-re-start the .NET Core app that represents our device.  Use "docker ps" and "docker logs -f \<module name>" to see the various debug messages from the modules
+re-start the python script/.NET Core app that represents our device.  Use "docker ps" and "docker logs -f \<module name>" to see the various debug messages from the modules
 
-If it is not still running, restart the D2C message monitoring within iothub-explorer on your VM.  You should see the aggregated temperature data come through every 30 seconds or so.  The .NET Core app representing our IoT Device generates temperature data in a "sawtooth" pattern, so it will regularly go above and below 80.  When it does, you should see a temperature alert (high and low) in the ASA job's log as well.
+If it is not still running, restart the D2C message monitoring within iothub-explorer on your VM.  You should see the aggregated temperature data come through every 30 seconds or so.  The python script/.NET Core app representing our IoT Device generates temperature data in a "sawtooth" pattern, so it will regularly go above and below 80.  When it does, you should see a temperature alert (high and low) in the ASA job's log as well.
 
 ## Summary
 

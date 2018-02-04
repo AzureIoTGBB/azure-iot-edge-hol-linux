@@ -226,7 +226,7 @@ As in the previous module, start the .NET Core app that represents our IoT Devic
 
 Once that is running, you can use "docker logs -f alertmodule" (or whatever you named your module) to see its logs.  You won't see anything yet.
 
-Watch the inputs from the .NET Core app.  Once the temperture crosses above 80, you should see the Alert come through the docker logs for the alertModule, and the DM call to turn the alert "ON" come through in the debug output of the .NET Core IoT Device. As the temperature drops back below 80, you should see the process repeat to turn the alert back off.
+Watch the inputs from the python script/.NET Core app.  Once the temperture crosses above 80, you should see the Alert come through the docker logs for the alertModule, and the DM call to turn the alert "ON" come through in the debug output of the python script/.NET Core IoT Device. As the temperature drops back below 80, you should see the process repeat to turn the alert back off.
 
 if it's not still running, run the iothub-explorer monitor-events command, as in modules 3 and 4, see the alert messages flow through to IoT Hub as well if you repeat the process.
 
