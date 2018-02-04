@@ -23,31 +23,7 @@ git clone http://github.com/azureiotgbb/azure-iot-edge-hol-linux
 
 For our device, we will leverage a .NET Core that emulates our IoT Device.  The device leverages our C# Azure IoT SDK to connect to the hub and sends temperature and humidity data to the Edge in a 'sawtooth' pattern  (so we can later test going above and below the 'threshold')
 
-### setup libraries and pre-requisites
-
-* to get started with the .NET core based IoT Device, we first need to install .NET Core on our VM.  To start, from your home folder (cd ~):
-
-```bash
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-
-sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-artful-prod artful main" > /etc/apt/sources.list.d/dotnetdev.list'
-
-sudo apt-get update
-
-sudo apt-get install dotnet-sdk-2.1.3
-```
-
-to confirm your install, run:
-
-```bash
-dotnet --version
-```
-
-it should return 2.1.3
-
-## create IoT Device in IoT Hub
+### create IoT Device in IoT Hub
 
 * To represent our device in IoT Hub, we need to create an IoT Device
 
@@ -57,7 +33,7 @@ it should return 2.1.3
     * capture (in notepad) the Connection String - Primary Key for your IoT device, we will need it in a moment.  We call this the "IoT Device connection string" that we'll need shortly.
     * NOTE that the device initially gets created in the 'Disabled' state.  Click on 'Enable' to enable your IoT Device.
 
-## set connection details
+### set connection details
 
 We need to fill in a couple of pieces of information into our python script.
 

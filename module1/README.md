@@ -140,6 +140,32 @@ iothub-explorer --version
 
 the last command above should dump out a version 1.x.x where x may vary.
 
+## install .NET Core
+
+To develop our Edge modules later, we are going to do it in .NET Core.  This is primary because the tooling is further along, a this preview stage of IoT Edge, for .NET Core/C# than our other SDK languages.  So first, we need to install .NET Core on our Linux box in order to compile our code
+
+The process to install .NET Core on Linux in general is outlined [here](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x).
+
+However, since we are running Ubuntu 17.10, we've distilled the instructions down for you.  Run the following commands on our Ubuntu box
+
+```bash
+curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+
+sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-artful-prod artful main" > /etc/apt/sources.list.d/dotnetdev.list'
+sudo apt-get update
+
+sudo apt-get install dotnet-sdk-2.1.3
+```
+
+Once the instructions above are complete, check for a successful install by running
+
+```bash
+dotnet --version
+```
+
+it should report back version 2.1.3
+
 ## Additional miscellaneous setup
 
 There are a few final steps needed to set up our specific lab scenario.  We are using our Edge device "as a gateway*, so we need a) our IoT Device to be able to find it and b) to have valid certificates so the IoT Device will open a successful TLS connection to the Edge

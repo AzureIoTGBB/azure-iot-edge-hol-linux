@@ -8,32 +8,6 @@ For this step of the lab, we are going to create an IoT Edge module that take th
 
 We will develop our module in C# using .NET Core.  In this version of the lab, rather than having a development machine set up (and having to go through the pre-reqs for that), we will do the work entirely on our Linux VM running our Edge box.
 
-## install .NET Core
-
-To develop our modules, we are going to do it in .NET Core.  This is primary because the tooling is further along, a this preview stage of IoT Edge, for .NET Core/C# than our other SDK languages.  So first, we need to install .NET Core on our Linux box in order to compile our code
-
-The process to install .NET Core on Linux in general is outlined [here](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x).
-
-However, since we are running Ubuntu 17.10, we've distilled the instructions down for you.  Run the following commands on our Ubuntu box
-
-```bash
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-artful-prod artful main" > /etc/apt/sources.list.d/dotnetdev.list'
-sudo apt-get update
-
-sudo apt-get install dotnet-sdk-2.1.3
-```
-
-Once the instructions above are complete, check for a successful install by running
-
-```bash
-dotnet --version
-```
-
-it should report back version 2.1.3
-
 ## install the IoT Edge project template
 
 the IoT Edge team has provided a .NET Core project template that makes development of our module much easier.  To install it, run the following command.
