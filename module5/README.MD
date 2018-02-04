@@ -222,11 +222,11 @@ In this section, we will get the module created above deployed and view the resu
 
 After a few seconds, the module should be downloaded and deployed to our IoT Edge runtime.  You can confirm this on the edge device by running "docker ps".  You should see all of the previous modules running, the edgeAgent, edgeHub, the formatterModule, the ASA module and our new AlertModule.  You can view the logs of any of them by running "docker logs -f \<module name>" to make sure they are working.
 
-As in the previous module, start the python script that represents our IoT Device to get messages flowing into the system. 
+As in the previous module, start the .NET Core app that represents our IoT Device to get messages flowing into the system. 
 
 Once that is running, you can use "docker logs -f alertmodule" (or whatever you named your module) to see its logs.  You won't see anything yet.
 
-Watch the inputs from the python script.  Once the temperture crosses above 80, you should see the Alert come through the docker logs for the alertModule, and the DM call to turn the alert "ON" come through in the debug output of the python IoT Device. As the temperature drops back below 80, you should see the process repeat to turn the alert back off.
+Watch the inputs from the .NET Core app.  Once the temperture crosses above 80, you should see the Alert come through the docker logs for the alertModule, and the DM call to turn the alert "ON" come through in the debug output of the .NET Core IoT Device. As the temperature drops back below 80, you should see the process repeat to turn the alert back off.
 
 if it's not still running, run the iothub-explorer monitor-events command, as in modules 3 and 4, see the alert messages flow through to IoT Hub as well if you repeat the process.
 

@@ -4,7 +4,7 @@ Created and maintained by the Microsoft Azure IoT Global Black Belts
 
 ## KNOW BEFORE YOU START
 
-This version of module2 uses a python script to act as our "IoT Device".  If you have trouble with it, or just prefer .NET, there is an alternate .NET Core version available [here](./README.dotnet.md)
+This version of module2 uses a .NET Core app to act as our "IoT Device".  If you have trouble with it, or just prefer python, the default python version is available [here](./README.md)
 
 ## Introduction
 
@@ -21,31 +21,31 @@ git clone http://github.com/azureiotgbb/azure-iot-edge-hol-linux
 
 ## Create "IoT Device"
 
-For our device, we will leverage a python script that emulates our IoT Device.  The device leverages our python Azure IoT SDK to connect to the hub and sends temperature and humidity data to the Edge in a 'sawtooth' pattern  (so we can later test going above and below the 'threshold')
+For our device, we will leverage a .NET Core that emulates our IoT Device.  The device leverages our C# Azure IoT SDK to connect to the hub and sends temperature and humidity data to the Edge in a 'sawtooth' pattern  (so we can later test going above and below the 'threshold')
 
 ### setup libraries and pre-requisites
 
-* Because we are in public preview with IoT Edge, we need to leverage a preview version of the python SDK.  To install that preview version, we need to clone it (the modules-preview branch) build it.  To start, from your home folder (cd ~):
+* to get started with the .NET core based IoT Device, we first need to install .NET Core on our VM.  To start, from your home folder (cd ~):
 
 ```bash
-git clone --recursive -b modules-preview http://github.com/azure/azure-iot-sdk-python
+curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 
-cd ~/azure-iot-sdk-python/build_all/linux
+sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
 
-sudo ./setup.sh
+sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-artful-prod artful main" > /etc/apt/sources.list.d/dotnetdev.list'
+
+sudo apt-get update
+
+sudo apt-get install dotnet-sdk-2.1.3
 ```
 
-After setup.sh completes, we need to build the SDK.  To do so, run
+to confirm your install, run:
 
 ```bash
-sudo ./build.sh
+dotnet --version
 ```
 
-Once the build is done, we need to copy over the compiled library to our solution folder
-
-```bash
-cp ../../device/samples/iothub_client.so ~/azure-iot-edge-hol-linux/module2
-```
+it should return 2.1.3
 
 ## create IoT Device in IoT Hub
 
@@ -62,18 +62,28 @@ cp ../../device/samples/iothub_client.so ~/azure-iot-edge-hol-linux/module2
 We need to fill in a couple of pieces of information into our python script.
 
 ```bash
-cd ~/azure-iot-edge-hol-linux/module2
+cd ~/azure-iot-edge-hol-linux/module2/dotnet/readserial_nodevice
 
-nano iotdevice.py
+nano Program.cs
 ```
 
 * In the line below
 
-```Python
-connection_string = "<IoT Device connection string here>"
+```CSharp
+static string ConnectionString = "<IoT Device connection string>";  //don't forget the ;GatewayHostName=mygateway.local
 ```
 
-* put your connection string in the quotes.  Onto the end of your connection string, append __**";GatewayHostName=mygateway.local"**__.  This tells our Python script/device to connect to the specified IoTHub in it's connection string, but to do so __**through the specified Edge gateway**__
+* put your connection string in the quotes.  Onto the end of your connection string, append __**";GatewayHostName=mygateway.local"**__.  This tells our .NET app/device to connect to the specified IoTHub in it's connection string, but to do so __**through the specified Edge gateway**__
+
+hit CTRL-0, \<enter>, CTRL-X to exit
+
+to ready our app, run
+
+```bash
+dotnet restore
+
+dotnet build
+```
 
 Ok, we now have our device ready, so let's get it connected to the Hub
 
@@ -124,16 +134,12 @@ where \<IoT Device Name> is the name of your IoT device (as originally creatd in
 Back on the edge device, run the following commands to 'run' our IoT device
 
 ```bash
-cd ~/azure-iot-edge-hol-linux/module2
+cd ~/azure-iot-edge-hol-linux/module2/dotnet/readserial_nodevice
 
-python -u iotdevice.py
+dotnet run
 ```
 
 You should see debug output indicating that the device was connected to the "IoT Hub" (in actuality it is connected to the edge device) and see it starting sending humidity and temperature messages.
-
-Your output should look something like the below screenshot.  Note that the lines showing the data being sent are interspersed with confirmation messages that it was successfully sent.  If your output doesn't look like this (and is, for example, only showing the temp/humidity readings and no confirmation messages), then YOUR PYTHON SCRIPT IS NOT CORRECTLY WORKING WITH EDGE and you need to troubleshoot.
-
-![python_success](/images/python_success.png)
 
 ### Observe D2C messages
 
@@ -149,13 +155,13 @@ Finally, we also want to test making a Direct Method call to our IoT Device.  La
  iothub-explorer device-method <IoT Device> "ON" --login "<IoTHub iothubowner connection string>"
 ```
 
-where \<IoT Device> is the name of your IoT device (as originally creatd in the Azure Portal  -- this is the name used for your python script!) and \<IoTHub iothubowner connection string> is the IoT Hub-leve connection string retrieved and stored earlier in Notepad.
+where \<IoT Device> is the name of your IoT device (as originally created in the Azure Portal  -- this is the name used for your .NET Core app!) and \<IoTHub iothubowner connection string> is the IoT Hub-leve connection string retrieved and stored earlier in Notepad.
 
-You should see debug output in the python script that is our IoT Device indicating that a DM call was made.  This is a stand-in for whatever action we would want to take on our real device in the event of an "emergency" high temp alert.
+You should see debug output in the .NET Core app that is our IoT Device indicating that a DM call was made.  This is a stand-in for whatever action we would want to take on our real device in the event of an "emergency" high temp alert.
 
 * repeat the process above, sending "OFF" as the command to toggle the "alert" back off.
 
-in the bash session runing your python script, hit CTRL-C to stop the script.
+in the bash session runing your .NET Core app, hit \<enter> to stop the script.
 
 ## Summary
 

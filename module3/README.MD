@@ -217,15 +217,15 @@ In this section, we will get the module created above deployed and view the resu
 
 After a few seconds, the module should be downloaded and deployed to our IoT Edge runtime on the Edge device.  You can confirm this by switching back to your Putty session and typing "docker ps".  You should see three modules running, the edgeAgent, edgeHub, and our new formatterModule.  You can view the logs of any of them by running "docker logs -f \<module name>" to make sure they are working.
 
-At this point, it can be useful to open a second Putty connection to our IoT Edge device.  That way you can run the python "IoT Device" in one, and look at logs, etc in the other.
+At this point, it can be useful to open a second Putty connection to our IoT Edge device.  That way you can run the .NET Core "IoT Device" in one, and look at logs, etc in the other.
 
-As in the previous module, start the python script that represents our IoT Device to get messages flowing into our formatter module.
+As in the previous module, start the .NET Core app that represents our IoT Device to get messages flowing into our formatter module.
 
 Once that is running, you can use "docker logs -f formattermodule" (or whatever you named your module) to see its logs.  You should see debug output indicating that it is receiving the CSV input, and outputing our new JSON module.
 
 ### Monitor our IoT Hub
 
-If you don't already have one, open an additional putty connection to your Edge device (so we can run our python script in the other)
+If you don't already have one, open an additional putty connection to your Edge device (so we can run our .NET Core script in the other)
 
 In that new window, to monitor the IoT Hub traffic, we will us the monitor-events function of iothub-explorer, like this:
 
@@ -233,7 +233,7 @@ In that new window, to monitor the IoT Hub traffic, we will us the monitor-event
 iothub-explorer monitor-events <Edge Device Name> -r --login "<IoTHub iothubowner connection string>"
 ```
 
-where \<Edge Device Name> is the name of your Edge device (as originally creatd in the Azure Portal - **NOTE this is different than the previous lab as we are now monitoring our EDGE devicee) and \<IoTHub iothubowner connection string> is the IoT Hub-leve connection string retrieved and stored earlier in Notepad.  After running the command, it should say "Monitoring events from device \<Edge Device Name>..."  No events will be shown yet, as we haven't started our IoT Device yet
+where \<Edge Device Name> is the name of your Edge device (as originally creatd in the Azure Portal - **NOTE this is different than the previous lab as we are now monitoring our EDGE devicee) and \<IoTHub iothubowner connection string> is the IoT Hub-leve connection string retrieved and stored earlier in Notepad.  After running the command, it should say "Monitoring events from device \<Edge Device Name>..."
 
 You should see messages flowing though the hub.  These messages have come from the device, to the local Edge Hub and been forwarded to the cloud based IoT Hub in a store-and-forward fashion (i.e. transparent gateway).  Please note that there may be some delay before you see data in the monitor.
 
