@@ -288,6 +288,8 @@ To build the docker image, run the following code, after replacing \<your docker
 ```bash
 cd ~/edge
 
+chmod +x start.sh
+
 cp ~/edge/alertmodule/start.sh ~/edge/alertmodule/bin/Debug/netcoreapp2.0/publish
 
 docker build -f "./alertmodule/Docker/linux-x64/Dockerfile" --build-arg EXE_DIR="./alertmodule/bin/Debug/netcoreapp2.0/publish" -t "<your docker user name>/alertmodule:latest" .
