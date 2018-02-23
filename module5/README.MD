@@ -286,7 +286,7 @@ dotnet publish
 To build the docker image, run the following code, after replacing \<your docker username> with, well, your docker user name creatd previously
 
 ```bash
-cd ~/edge
+cd ~/edge/alertmodule
 
 chmod +x start.sh
 

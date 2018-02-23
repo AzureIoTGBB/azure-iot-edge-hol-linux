@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/module2/dotnet/readserial_nodevice/readserial_nodevice.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
