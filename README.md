@@ -32,8 +32,6 @@ If you have questions or issues for the lab, check out our [troubleshooting](tro
 
 Below is a conceptual flow for the labs to help visualize what is taking place and how the data is flowing through the system  ("T/H" is short for "temperature and humidity)
 
-\<TODO:   UPDATE DRAWING to remove DHT sensor>
-
 ![conceptual drawing](/images/IoT-Edge-Labs-Conceptual-Design.png)
 
 ## Edge "Device"
