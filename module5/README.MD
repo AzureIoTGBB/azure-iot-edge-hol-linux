@@ -283,7 +283,7 @@ dotnet publish
 
 ## build our docker image
 
-To build the docker image, run the following code, after replacing \<your docker username> with, well, your docker user name creatd previously
+To build the docker image, run the following code, after replacing \<your docker username> with, well, your docker user name created previously
 
 ```bash
 cd ~/edge/alertmodule
@@ -291,6 +291,8 @@ cd ~/edge/alertmodule
 chmod +x start.sh
 
 cp ~/edge/alertmodule/start.sh ~/edge/alertmodule/bin/Debug/netcoreapp2.0/publish
+
+cd ..
 
 docker build -f "./alertmodule/Docker/linux-x64/Dockerfile" --build-arg EXE_DIR="./alertmodule/bin/Debug/netcoreapp2.0/publish" -t "<your docker user name>/alertmodule:latest" .
 ```
