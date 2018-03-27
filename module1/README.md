@@ -164,10 +164,10 @@ it should report back version 2.1.3
 
 There are a few final steps needed to set up our specific lab scenario.  We are using our Edge device "as a gateway*, so we need a) our IoT Device to be able to find it and b) to have valid certificates so the IoT Device will open a successful TLS connection to the Edge
 
-* clone the "preview" branch of the Azure IoT C SDK (we need it to get to some scripts for generating certificates)
+* clone the "modules-preview" branch of the Azure IoT C SDK (we need it to get to some scripts for generating certificates)
 
 ```bash
-git clone -b CACertToolEdge https://github.com/Azure/azure-iot-sdk-c
+git clone -b modules-preview https://github.com/Azure/azure-iot-sdk-c
 ```
 
 * Add a host file entry for our Edge device -- this will let our "IoT Device" resolve and find our Edge gateway.  To do this:
