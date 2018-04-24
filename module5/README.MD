@@ -2,6 +2,9 @@
 
 Created and maintained by the Microsoft Azure IoT Global Black Belts
 
+
+# NOTE:   Please note - there is a temporary issue with IoT Edge resulting in a certificate validation problem.  Module 5 will currently not work
+
 ## Introduction
 
 For this step of the lab, we are going to create an IoT Edge module that will respond to the "High Temperature Alert" message generated from our Azure Stream Analytics on the Edge module in module 4. This module will take that alert, and send a Direct Method call to our device to tell it to turn on or off a "high temperature" alert LED.  This is a simple example, but demonstrates communicating back to a device from a module.  More importantly, along with module 4, it shows an example of how to take local "action" on the Edge in situations where you need low latency processing and action on the edge.
@@ -36,7 +39,7 @@ Now lets modify the sample code to implement our Alert module.
 ```bash
 cd ~/edge/alertmodule
 
-dotnet add package Microsoft.Azure.Devices --version 1.16.0-preview-001
+dotnet add package Microsoft.Azure.Devices --version 1.16.0-preview-003
 
 dotnet restore
 ```
@@ -80,6 +83,7 @@ if (!bypassCertVerification) InstallCert();
 
 ```CSharp
 ioTServiceClient = ServiceClient.CreateFromConnectionString(connectionString);
+Console.Writeline("Service client successfully initialized");
 ```
 
 * the balance of our work will be in the PipeMessage function.  the top part of the function, which gets the "Device Client" instance that is stored in Context and makes sure it's valid, and that opens the message and gets it's content as a string, is boiler-plate and is fine for our purposes.  
@@ -126,146 +130,9 @@ catch(Exception e)
 
 Save and close the Program.cs file with CTRL-O, \<enter>, CTRL-X
 
-## Customizing module startup
-
-The way the Service Client expects to see and validate certificates is different than the Device-side client that we are used to using with the Device Client.
-
-So as part of the 'startup' of the alertModule, we need to make sure we place the certs used by our Edge runtime in the right place to authenticate edgeHub.  We will do this by running, in our container, a shell script that does the install of the certificate information passed in via environment variables from the Edge runtime.
-
-Within the ~/edge/alertmodule folder, create a file called 'start.sh'
-
-```bash
-nano start.sh
-```
-
-Within the start.sh file, copy and paste the following code:
-
-```bash
-#!/bin/bash
-
-###############################################################################
-# Script to setup a edge module before executing it. The input to this script
-# are driven through environament variables
-#    Required Environament Variables
-#        MODULE_NAME - This is the name of the dotnet DLL to execute
-#    Optional Environament Variables
-#        EdgeModuleCACertificateFile - This is set by the Edge Agent when
-#                                      launching the module and is used for
-#                                      TLS validation of the EdgeHub server
-###############################################################################
-
-###############################################################################
-# Global Script Variables
-###############################################################################
-# Path on Debian OSes where CA certs are to be copied before they are installed
-CA_CERT_PATH="/usr/local/share/ca-certificates/edge-module-ca.crt"
-
-# Module name to be launched
-LAUNCH_MODULE_NAME=
-
-###############################################################################
-# Helper function to install a CA certificate
-# Input:
-#   CA certificate file path
-#   CA certificate install path
-#
-# Return Ouput: None
-# Globals Updated: None
-###############################################################################
-function install_ca_cert()
-{
-    ca_cert_file_path="${1}"
-    ca_cert_install_path="${2}"
-
-    # copy the CA cert into the ca cert dir
-    command="cp ${ca_cert_file_path} ${ca_cert_install_path}"
-    echo "Executing Command:${command}"
-    ${command}
-    if [ $? -ne 0 ]; then
-        echo "Failed to Copy Edge Device CA Certificate."
-        exit 1
-    fi
-
-    # register the newly added CA cert
-    command="update-ca-certificates"
-    echo "Executing: ${command}"
-    ${command}
-    if [ $? -ne 0 ]; then
-        echo "Failed to Update CA Certificate."
-        exit 1
-    fi
-    echo "Certificate installed successfully!"
-
-}
-###############################################################################
-# Validate Environment Variables and Install any CA certificate(s)
-#    MODULE_NAME - Edge Module DLL to launch
-#    EdgeModuleCACertificateFile - Edge CA Certificate To Install
-#
-# Return Ouput: None
-# Globals Updated: None
-###############################################################################
-function validate_and_process_env_args()
-{
-    # make sure MODULE to be launched is provided
-    LAUNCH_MODULE_NAME=$(printenv MODULE_NAME)
-    if [[ -z "${LAUNCH_MODULE_NAME}" ]]; then
-        echo "Module Name Cannot Be Empty"
-        exit 1
-    fi
-
-    # check if the CA certificate is available and if so install it
-    EdgeModuleCACertificateFile=$(printenv EdgeModuleCACertificateFile)
-    echo "CA Certificate File: ${EdgeModuleCACertificateFile}"
-    # check if the EdgeAgent supplied the module with the Edge Runtime CA cert
-    if [[ ! -z "${EdgeModuleCACertificateFile}" ]]; then
-        install_ca_cert ${EdgeModuleCACertificateFile} ${CA_CERT_PATH}
-    else
-        echo "Warning: Edge Hub CA Certificate Not Available! Edge Hub" \
-             " Server TLS validation will likely fail."
-    fi
-}
-
-function launch_module()
-{
-    local module="${1}"
-    echo "Launching Edge Module: ${module}"
-    exec dotnet ${module}
-}
-
-###############################################################################
-# Main Script Execution
-###############################################################################
-validate_and_process_env_args
-launch_module "${LAUNCH_MODULE_NAME}"
-```
-
-Save and exit the file (CTRL-O, \<enter>, CTRL-X)
-
-Like you saw in Module 2, the template provides a Dockerfile for generating our Docker image.  The default Dockerfile generated by the template just copies over and starts the module directly.  In our case, we need to modify the generated Dockerfile to invoke our start.sh script (which launches the module after installing the certs).  Since we are running linux containers on our Windows hosts, we need to modify the Linux version of the docker image.
-
-Navigate to the ~/edge/alertmodule/Docker/linux-x64 folder and open Dockerfile.
-
-Using Nano, replace the contents of the Dockerfile with the below...  (if you named your module something other than alertmodule, you need to change that name below)
-
-```
-FROM microsoft/dotnet:2.0.5-runtime
-
-ENV MODULE_NAME "alertmodule.dll"
-
-ARG EXE_DIR=.
-
-WORKDIR /app
-
-COPY $EXE_DIR/ ./
-
-CMD ["./start.sh"]
-
-```
-
-Save your changes to the Dockerfile  (CTRL-O, \<enter>, CTRL-X)
-
 ## build and "publish" our module
+
+When we build the docker image in a few moments, our project will actually be "built" as part of that process, but we'll manually go ahead and build it here just to be sure it builds without error before we try to build the docker image.
 
 To build our code, from within the ~/edge/alertmodule folder, run
 
@@ -273,13 +140,7 @@ To build our code, from within the ~/edge/alertmodule folder, run
 dotnet build
 ```
 
-Once the code builds successfully, we need to "publish" the module.  This copies our compiled code, and all of it's dependencies, into a single folder we can package up for deployment (in our case, to a Docker image)
-
-To publish the code, from within the ~/edge/alertmodule folder, run
-
-```bash
-dotnet publish
-```
+Once the code builds successfully, we are ready to build our docker image
 
 ## build our docker image
 
@@ -288,13 +149,7 @@ To build the docker image, run the following code, after replacing \<your docker
 ```bash
 cd ~/edge/alertmodule
 
-chmod +x start.sh
-
-cp ~/edge/alertmodule/start.sh ~/edge/alertmodule/bin/Debug/netcoreapp2.0/publish
-
-cd ..
-
-docker build -f "./alertmodule/Docker/linux-x64/Dockerfile" --build-arg EXE_DIR="./alertmodule/bin/Debug/netcoreapp2.0/publish" -t "<your docker user name>/alertmodule:latest" .
+docker build -t "<your docker user name>/alertmodule:latest" .
 ```
 
 ## push our docker image

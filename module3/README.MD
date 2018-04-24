@@ -115,7 +115,9 @@ using Newtonsoft.Json;
 
 To save the Program.cs file, hit CTRL-O and then CTRL-X to exit.
 
-## build and "publish" our module
+## build our module
+
+When we build the docker image in a few moments, our project will actually be "built" as part of that process, but we'll manually go ahead and build it here just to be sure it builds without error before we try to build the docker image.
 
 To build our code, from within the ~/edge/formattermodule folder, run
 
@@ -123,29 +125,23 @@ To build our code, from within the ~/edge/formattermodule folder, run
 dotnet build
 ```
 
-Once the code builds successfully, we need to "publish" the module.  This copies our compiled code, and all of it's dependencies, into a single folder we can package up for deployment (in our case, to a Docker image)
-
-To publish the code, from within the ~/edge/formattermodule folder, run
-
-```bash
-dotnet publish
-```
+Once the code builds successfully, we are ready to build our docker image
 
 ## build our docker image
 
 One of the nice things about our IoT Edge template is that it pregenerates the necessary "Dockerfile" to build our docker image.  That makes it simple for us to build.   It you like, you can review the Dockerfile by running
 
 ```bash
-cat ~/edge/formattermodule/Docker/linux-x64/Dockerfile
+cat ~/edge/formattermodule/Dockerfile
 ```
 
-Review the file and get a feel for what it's doing (which is essentially, starting from a base ".NET Core" image, copy over all of the published files from our module, and then just running our DLL)
+Review the file and get a feel for what it's doing (which is essentially, starting from a base ".NET Core" image, copying over your code, building it, and setting it to run when the image is launched)
 
-To build the docker image, run the following code, after replacing \<your docker username> with, well, your docker user name creatd previously
+To build the docker image, run the following code, after replacing \<your docker username> with, well, your docker user name created previously
 
 ```bash
-cd ~/edge
-docker build -f "./formattermodule/Docker/linux-x64/Dockerfile" --build-arg EXE_DIR="./formattermodule/bin/Debug/netcoreapp2.0/publish" -t "<your docker user name>/formattermodule:latest" .
+cd ~/edge/formattermodule
+docker build -t "<your docker user name>/formattermodule:latest" .
 ```
 
 ## push our docker image
@@ -207,7 +203,7 @@ In that new window, to monitor the IoT Hub traffic, we will us the monitor-event
 iothub-explorer monitor-events <Edge Device Name> -r --login "<IoTHub iothubowner connection string>"
 ```
 
-where \<Edge Device Name> is the name of your Edge device (as originally creatd in the Azure Portal - **NOTE this is different than the previous lab as we are now monitoring our EDGE devicee) and \<IoTHub iothubowner connection string> is the IoT Hub-leve connection string retrieved and stored earlier in Notepad.  After running the command, it should say "Monitoring events from device \<Edge Device Name>..."
+where \<Edge Device Name> is the name of your Edge device (as originally creatd in the Azure Portal - **NOTE this is different than the previous lab as we are now monitoring our EDGE devicee) and \<IoTHub iothubowner connection string> is the IoT Hub-level connection string retrieved and stored earlier in Notepad.  After running the command, it should say "Monitoring events from device \<Edge Device Name>..."
 
 You should see messages flowing though the hub.  These messages have come from the device, to the local Edge Hub and been forwarded to the cloud based IoT Hub in a store-and-forward fashion (i.e. transparent gateway).  Please note that there may be some delay before you see data in the monitor.
 
