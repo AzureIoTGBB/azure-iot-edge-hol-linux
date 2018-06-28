@@ -4,7 +4,7 @@ Created and maintained by the Microsoft Azure IoT Global Black Belts
 
 
 
-# NOTE - this is a work in progress..  It's not anywhere near done yet.  It is an alternate implementation of the HOLs used in the labs found [here](http://github.com/azureiotgbb/azure-iot-edge-hol)   :-)
+# NOTE - We are in the process of updating the labs to leverage the new GA bits and process for IoT Edge... We hope to have the updates soon.  Currently, consider these labs "closed for construction"  :-)
 
 
 ## Overview
