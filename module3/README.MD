@@ -35,8 +35,7 @@ nano Program.cs
 Review the boiler-plate code to understand what it does.  A few notes:
 
 * The main funtion retrieves the 'connection string' for the module from an environment variable passed into it's docker container by the edge Agent when it creates the container.  This connection string is for the module to connect to the local edge Hub instance.  Main called "Init" to initiate the connection to the local Hub and set up any callbacks.
-* The edge Agent also passes in the necessary cert for a connection to the edge Hub that the module must 'trust' before it can connect (for TLS).  This cert is retreived and installed by the InstallCerts method
-* the Init method creates an instance of the Device Client class (which is the exact same one you would use to connect to IoT Hub in the cloud) and connects using the connection string passed in from the egde Agent.  The Init method then sets any callbacks that will be raised whenever a message is routed to this module (on a named "input") or when module-twin changes happen
+* the Init method creates an instance of the Module Client class and connects using the connection string passed in from the edgeAgent (under the covers).  The Init method then sets any callbacks that will be raised whenever a message is routed to this module (on a named "input") or when module-twin changes happen
 * The PipeMessage function is an example implementation of a "listener" for messages to be routed to this module.  In the sample implementation, we are basically getting the content of the message and any user-defined meta-data properties, and echoing them back on a new message.  We are then marking the current message as "complete" so the edge runtime knows we are done with it.  We will be modifying this sample method to implement our message 'formatter'
 
 ## Modify the sample implementation
@@ -101,7 +100,7 @@ using Newtonsoft.Json;
                 }
 
                 // send the data to the edge Hub on a named output (for routing)
-                await deviceClient.SendEventAsync("output1", pipeMessage);
+                await moduleClient.SendEventAsync("output1", pipeMessage);
                 Console.WriteLine($"Converted message sent({counter}): {newMessage}");
 ```
 
@@ -137,11 +136,13 @@ cat ~/edge/formattermodule/Dockerfile
 
 Review the file and get a feel for what it's doing (which is essentially, starting from a base ".NET Core" image, copying over your code, building it, and setting it to run when the image is launched)
 
-To build the docker image, run the following code, after replacing \<your docker username> with, well, your docker user name created previously
+For the rest of the instructions "[your docker repo]" is a placeholder where you will use your docker container repository created earlier (i.e. myazurerepo.azurecr.io).
+
+To build the docker image, run the following code.
 
 ```bash
 cd ~/edge/formattermodule
-docker build -t "<your docker user name>/formattermodule:latest" .
+docker build -f Dockerfile.amd64 -t "[your docker repo]>/formattermodule:0.0.1-amd64" .
 ```
 
 ## push our docker image
@@ -151,9 +152,11 @@ This step is optional, since we developed the image on the same box we are going
 To push your image to the Docker Hub, run
 
 ```bash
-docker login -u <your docker user name> -p <your docker password>
-docker push <your docker user name>/formattermodule:latest
+docker login -u [your docker user name] -p [your docker password] [your docker repo]
+docker push [your docker repo]/formattermodule:0.0.1-amd64
 ```
+
+where [your docker user name] is the short name of your azure container repo created earlier (i.e. myazurerepo) and [your docker password] is the container repo password you captured to Notepad in module 1  (the big long cryptographic string)
 
 ## Deploy Edge module
 
@@ -161,9 +164,15 @@ In this section, we will get the module created above deployed and view the resu
 
 * in the Azure portal, navigate to your IoT Hub, click on IoT Edge Devices (preview) on the left nav, click on your IoT Edge device
 * click on "Set Modules" in the top menu bar.  
-* In the Set Modules blade, click on "Add IoT Edge Module"
+* In the Set Modules blade, 
+    * We need to give the edgeAgent the right credentials to access our repo in order to pull the docker image for our module at run-time.  In the "Container Registry Settings" section at the top, fill in the following fields
+        * Name:   [your docker user name]    (i.e. the short name of your azure container registry repo)
+        * Address:  [your docker repo]   (i.e. the long name)
+        * User Name:   same as "Name" above
+        * Password:  the cryptographic password of your azure container repo
+    * In the Deployment Modules section, click on "Add", and then "IoT Edge Module"
     * In the "IoT Edge Modules" dialog, give your module a name (for example:  formattermodule).  Remember the name you used, including the proper 'case' of the letters, as we'll need that when we set the routes in the next step.
-    * in the image URI box, put in the exact same image name you used in the previous step (e.g. \<docker hub id>/formattermodule:latest)
+    * in the image URI box, put in the exact same image name you used in the previous step (e.g. [your docker repo]/formattermodule:0.0.1-amd64)
     * leave the other defaults and click "Save"
 * back on the "Set Modules" blade, click "next"
 * on the "specify routes" blade, replace the default with the following:
@@ -185,7 +194,7 @@ In this section, we will get the module created above deployed and view the resu
 
 ### Test our module
 
-After a few seconds, the module should be downloaded and deployed to our IoT Edge runtime on the Edge device.  You can confirm this by switching back to your Putty session and typing "docker ps".  You should see three modules running, the edgeAgent, edgeHub, and our new formatterModule.  You can view the logs of any of them by running "docker logs -f \<module name>" to make sure they are working.
+After a few seconds, the module should be downloaded and deployed to our IoT Edge runtime on the Edge device.  You can confirm this by switching back to your Putty session and typing "docker ps".  You should see three modules running, the edgeAgent, edgeHub, and our new formatterModule.  You can view the logs of any of them by running "docker logs -f [module name]" to make sure they are working.
 
 At this point, it can be useful to open a second Putty connection to our IoT Edge device.  That way you can run the .NET Core "IoT Device" in one, and look at logs, etc in the other.
 
@@ -195,21 +204,19 @@ Once that is running, you can use "docker logs -f formattermodule" (or whatever 
 
 ### Monitor our IoT Hub
 
-If you don't already have one, open an additional putty connection to your Edge device (so we can run our python script/.NET Core app in the other)
-
-In that new window, to monitor the IoT Hub traffic, we will us the monitor-events function of iothub-explorer, like this:
+In the Azure cloud CLI that is open in the browser, if your monitoring of IoT Hub is not still running from module 2, run this command to restart the monitoring
 
 ```bash
-iothub-explorer monitor-events <Edge Device Name> -r --login "<IoTHub iothubowner connection string>"
+az iot hub monitor-events -n [hub name]
 ```
 
-where \<Edge Device Name> is the name of your Edge device (as originally creatd in the Azure Portal - **NOTE this is different than the previous lab as we are now monitoring our EDGE devicee) and \<IoTHub iothubowner connection string> is the IoT Hub-level connection string retrieved and stored earlier in Notepad.  After running the command, it should say "Monitoring events from device \<Edge Device Name>..."
+where [hub name] is the short name of your IoT Hub.
 
 You should see messages flowing though the hub.  These messages have come from the device, to the local Edge Hub and been forwarded to the cloud based IoT Hub in a store-and-forward fashion (i.e. transparent gateway).  Please note that there may be some delay before you see data in the monitor.
 
-hit CTRL-C to stop monitoring.
+> NOTE: Now that we have an edge module "in between" our IoT device and IoT Hub in the cloud, the messages no longer appears as though it comes from the original IoT Device, but rather from our Edge device now. This is an important distinction. This is one of the reasons also, that our Formatter Module snags the original deviceID and embeds it in our message (we could have also put it in the user-defined metadata for the message). Otherwise, the original device origin would be lost.
 
-** NOTE: Now that we have an edge module "in between" our IoT device and IoT Hub in the cloud, the messages no longer appears as though it comes from the original IoT Device, but rather from our Edge device now. This is an important distinction. This is one of the reasons also, that our Formatter Module snags the original deviceID and embeds it in our message (we could have also put it in the user-defined metadata for the message). Otherwise, the original device origin would be lost.**
+hit CTRL-C to stop monitoring.
 
 ## Summary
 

@@ -25,7 +25,7 @@ For our device, we will leverage a python script that emulates our IoT Device.  
 
 ### setup libraries and pre-requisites
 
-* Because we are in public preview with IoT Edge, we need to leverage a preview version of the python SDK.  To install that preview version, we need to clone it (the modules-preview branch) build it.  To start, from your home folder (cd ~):
+The first step is that we need to download and build the Azure IoThub Python SDK. There is a pip package for it, but it's currently broken on Ubuntu 18.04, so we will clone the source and build manually.  To do so, follow these steps.
 
 ```bash
 git clone --recursive http://github.com/azure/azure-iot-sdk-python
@@ -102,7 +102,7 @@ The edge device is now ready for our device to connect.
 We can confirm our edgeHub is set up and listening for connections from downstream "leaf" devices, we'll open a test TLS connection using the openssl tool.   From the bash prompt, run
 
 ```bash
-openssl s_client -connect mygateway.local:8883 -CAfile ~/edge/certs/azure-iot-test-only.root.ca.cert.pem
+openssl s_client -connect mygateway.local:8883
 ```
 
 At the bottom of the output, you should see the text "Verified (ok)".  Type a capital Q and hit enter to exit.
@@ -110,15 +110,15 @@ At the bottom of the output, you should see the text "Verified (ok)".  Type a ca
 
 ### Monitor our IoT Hub
 
-If you don't already have one, open an additional putty connection to your Edge device (so we can run our python script in the other)
+We will monitor the messages that will be flowing from our IoT Device to IoT Hub using the azure CLI.  
 
-In that new window, to monitor the IoT Hub traffic, we will us the monitor-events function of iothub-explorer, like this:
+* In the azure cloud CLI window opened earlier in your browser, run the following command.
 
 ```bash
-iothub-explorer monitor-events <IoT Device Name> -r --login "<IoTHub iothubowner connection string>"
+az iot hub monitor-events -n [hub name]
 ```
 
-where \<IoT Device Name> is the name of your IoT device (as originally creatd in the Azure Portal and used in our python script) and \<IoTHub iothubowner connection string> is the IoT Hub-leve connection string retrieved and stored earlier in Notepad.  After running the command, it should say "Monitoring events from device \<IoT Device Name>..."  No events will be shown yet, as we haven't started our IoT Device yet
+where [hub name] is the short name of your IoT Hub you created earlier.  The screen should say "Starting event monitor, use ctrl-c to stop...".  No events will be shown yet, as we haven't started our IoT Device yet.  We will do that next.
 
 ### start the local IoT device
 
@@ -138,7 +138,7 @@ Your output should look something like the below screenshot.  Note that the line
 
 ### Observe D2C messages
 
-In the iothub-explorer output window opened earlier, you should see messages flowing though the hub.  These messages have come from the device, to the local Edge Hub and been forwarded to the cloud based IoT Hub in a store-and-forward fashion (i.e. transparent gateway).  Please note that there may be some delay before you see data in the monitor.
+In the azure cloud CLI window opened above, you should see messages flowing though the hub.  These messages have come from the device, to the local Edge Hub and been forwarded to the cloud based IoT Hub in a store-and-forward fashion (i.e. transparent gateway).  Please note that there may be some delay before you see data in the monitor.
 
 hit CTRL-C to stop monitoring.
 
@@ -146,11 +146,11 @@ hit CTRL-C to stop monitoring.
 
 Finally, we also want to test making a Direct Method call to our IoT Device.  Later, this functionality will allow us to respond to "high temperature" alerts by taking action on the device.  For now, we just want to test the connectivity to make sure that edgeHub is routing Direct Method calls propery to our device.  To test:
 
-```
- iothub-explorer device-method <IoT Device> "ON" --login "<IoTHub iothubowner connection string>"
+```bash
+ az iot hub invoke-device-method -d [iot leaf device name] -mn ON -n [hub name]
 ```
 
-where \<IoT Device> is the name of your IoT device (as originally creatd in the Azure Portal  -- this is the name used for your python script!) and \<IoTHub iothubowner connection string> is the IoT Hub-leve connection string retrieved and stored earlier in Notepad.
+where [iot leaf device name] is the name of your IoT device (as originally created in the Azure Portal  -- this is the name used for your python script!), NOT your edge device name and [hub name] is the short name of your IoT Hub you created earlier.
 
 You should see debug output in the python script that is our IoT Device indicating that a DM call was made.  This is a stand-in for whatever action we would want to take on our real device in the event of an "emergency" high temp alert.
 

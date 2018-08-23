@@ -133,23 +133,9 @@ We will connect to our new Linux box via it's public IP address.  To get the con
 
 ### install .NET Core
 
-# TODO:  update these instructions...  I think they are broken
+To develop our Edge modules later, we are going to do it in .NET Core and C#.  A future version of this lab may incorporate python and node modules.
 
-To develop our Edge modules later, we are going to do it in .NET Core.  This is primary because the tooling is further along, a this preview stage of IoT Edge, for .NET Core/C# than our other SDK languages.  So first, we need to install .NET Core on our Linux box in order to compile our code
-
-The process to install .NET Core on Linux in general is outlined [here](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x).
-
-However, since we are running Ubuntu 17.10, we've distilled the instructions down for you.  Run the following commands on our Ubuntu box
-
-```bash
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-artful-prod artful main" > /etc/apt/sources.list.d/dotnetdev.list'
-sudo apt-get update
-
-sudo apt-get install dotnet-sdk-2.1.3
-```
+* To install .NET Core, follow the instructions [here](https://www.microsoft.com/net/download/linux-package-manager/ubuntu18-04/sdk-current)
 
 Once the instructions above are complete, check for a successful install by running
 
@@ -157,7 +143,7 @@ Once the instructions above are complete, check for a successful install by runn
 dotnet --version
 ```
 
-it should report back version 2.1.3
+it should report back version 2.1.x
 
 ## Install IoT Edge
 

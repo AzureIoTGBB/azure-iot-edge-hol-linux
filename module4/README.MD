@@ -24,12 +24,10 @@ An ASA job consists of three parts:
 To create the ASA job:
 
 * in the Azure portal, navigate in the left nav bar to the Azure Stream Analytics jobs blade and click Add
-    * give your ASA job a unique name (e.g. edgeASAJob)
-    * under resource group, choose "use existing" and pick the same resource group that contains your IoT Hub
-    * for Hosting Environment, choose "Edge"   (see NOTE below)
-    * click "Create"
-
-NOTE:   there is a bug in the Azure portal that may be fixed by the time you do these labs, however, if you do not see the "Hosting Environment" choice in the UI, use [this link](https://portal.azure.com/?Microsoft_Azure_StreamAnalytics_onedge=true) to access the Azure Portal instead
+  * give your ASA job a unique name (e.g. edgeASAJob)
+  * under resource group, choose "use existing" and pick the same resource group that contains your IoT Hub
+  * for Hosting Environment, choose "Edge"   (see NOTE below)
+  * click "Create"
 
 After a few moments, your ASA job will be created.  Click "Go to Resource" to navigate to the portal blade for your job
 
@@ -40,10 +38,10 @@ After a few moments, your ASA job will be created.  Click "Go to Resource" to na
 Navigate back to the blade for your ASA job and click on the "outputs" box to add outputs
 
 * Our job is going to leverage two different outputs, one for the aggregated temperature data and one for the alerts
-    * click Add to create a new output and choose "Edge Hub"
-    * name your output asaAggregatedTemp for the aggregated temperature data
-    * leave the remaining settings at default and click "Create"
-    * repeat the above three steps for the alert output (name it asaAlertTemp)
+  * click Add to create a new output and choose "Edge Hub"
+  * name your output asaAggregatedTemp for the aggregated temperature data
+  * leave the remaining settings at default and click "Create"
+  * repeat the above three steps for the alert output (name it asaAlertTemp)
 
 The next step is to specify the query.  In the upper right of the query window, click on the "Edit query" to open the query editor.  Copy/paste in this query:
 
@@ -90,7 +88,7 @@ If we break down the query above, it really has two main parts:
 
 * Click Save to save your query and close the editor
 
-## Deploy the ASA job
+## Set up a storage account
 
 In order to deploy our ASA job to Edge, the first step we need to do is to create a storage account in Azure.  The storage account is used to hold the details of the job and as a place from which the ASA on Edge module can download it.
 
@@ -103,14 +101,17 @@ To create a storage account:
     * after the account gets created, navigate to it and click "Browse Blobs"
     * Create a new container (give it a name) and for access, choose "Container" level and select "Ok"
 
+* Now return to your ASA job and click on the "IoT Edge Settings" tab.
+* Select your storage account and container that you just created and click Save.
+
+## Deploy our ASA job
 
 Now we are ready to deploy our ASA job to our Edge device.
 
 * navigate back to your IoT Hub and then to your Edge device
 * click "Set Modules"
-* select "Import Azure Stream Analytics IoT Edge Module"
-* select your subscription, and the ASA job you created earlier
-* under Storage account, select your subscription and the storage account you created earlier
+* select "Add" and then "Azure Stream Analytics Module"
+* select your subscription, and the ASA job you created earlier.  After a few moments you'll get a notification that the ASA job has been successfully published
 * click "next" to configure our routes
 * on the 'specify routes' screen, enter the following routes
 
@@ -133,7 +134,7 @@ click 'next' and 'finish' to publish our routes.
 
 re-start the python script/.NET Core app that represents our device.  Use "docker ps" and "docker logs -f \<module name>" to see the various debug messages from the modules
 
-If it is not still running, restart the D2C message monitoring within iothub-explorer on your VM.  You should see the aggregated temperature data come through every 30 seconds or so.  The python script/.NET Core app representing our IoT Device generates temperature data in a "sawtooth" pattern, so it will regularly go above and below 80.  When it does, you should see a temperature alert (high and low) in the ASA job's log as well.
+If it is not still running, restart the D2C message monitoring within the Azure Cloud CLI.  You should see the aggregated temperature data come through every 30 seconds or so.  The python script/.NET Core app representing our IoT Device generates temperature data in a "sawtooth" pattern, so it will regularly go above and below 80.  When it does, you should see a temperature alert (high and low) in the ASA job's log as well.
 
 ## Summary
 
