@@ -29,19 +29,7 @@ This will create a folder under edge called 'alertmodule'.  A number of nice thi
 
 Now lets modify the sample code to implement our Alert module.
 
-TODO:   pretty sure this isnt' needed any more...
-
-* in addition to the "Device Client" that other modules use, the Alerts sample also needs to use the "Service Client" to send Direct Method calls.  To add the service client, do the following:
-
-```bash
-cd ~/edge/alertmodule
-
-dotnet add package Microsoft.Azure.Devices --version 1.16.0-preview-003
-
-dotnet restore
-```
-
-Now open Program.cs to edit   (nano Program.cs)
+Open Program.cs to edit   (nano Program.cs)
 
 * in the "using" section above the Program class, add the two following 'using' statements
 
@@ -49,7 +37,6 @@ Now open Program.cs to edit   (nano Program.cs)
 using Newtonsoft.Json;
 using Microsoft.Azure.Devices;
 using Message = Microsoft.Azure.Devices.Client.Message;
-using TransportType = Microsoft.Azure.Devices.Client.TransportType;  TODO:  remove??
 ```
 
 * in Program.cs, above the "Program" class, add the C# class that will represent our message we want to publish to the Hub
@@ -64,24 +51,7 @@ using TransportType = Microsoft.Azure.Devices.Client.TransportType;  TODO:  remo
     }
 ```
 
-* at the top of the "Program" class (just below the line that reads "static int counter"), add the following code
-
-TODO:  remove??
-
-```CSharp
-static ServiceClient ioTServiceClient;
-```
-
-TODO:  remove?
-
-* In the Init function, right below the call to DeviceClient.CreateFromConnectionString, add this call
-
-```CSharp
-ioTServiceClient = ServiceClient.CreateFromConnectionString(connectionString);
-Console.Writeline("Service client successfully initialized");
-```
-
-* the balance of our work will be in the PipeMessage function.  the top part of the function, which gets the "Module Client" instance that is stored in Context and makes sure it's valid, and that opens the message and gets it's content as a string, is boiler-plate and is fine for our purposes.  
+* the balance of our work will be in the PipeMessage function.  The top part of the function, which gets the "Module Client" instance that is stored in Context and makes sure it's valid, and that opens the message and gets it's content as a string, is boiler-plate and is fine for our purposes.  
 
 The rest of the work we will be doing is inside the "if" block below (which checks to make sure we don't have an empty message):
 
@@ -108,8 +78,7 @@ else
 Console.WriteLine($"Invoking Direct Method to {alertMsg.deviceID} for tempState={alertMsg.tempState}");
 
 try {
-    TODO:  switch to moduleClient
-    var result = await ioTServiceClient.InvokeDeviceMethodAsync(alertMsg.deviceID, new CloudToDeviceMethod(command));
+    var result = await moduleClient.InvokeDeviceMethodAsync(alertMsg.deviceID, new CloudToDeviceMethod(command));
     Console.WriteLine($"Result status: {result.Status}");
 }
 catch(Exception e)
