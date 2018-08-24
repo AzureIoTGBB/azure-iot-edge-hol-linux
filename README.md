@@ -40,5 +40,4 @@ Below is a conceptual flow for the labs to help visualize what is taking place a
 
 ![conceptual drawing](/images/IoT-Edge-Labs-Conceptual-Design.png)
 
-
 __**Let's get started!!**__
