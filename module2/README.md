@@ -107,7 +107,6 @@ openssl s_client -connect mygateway.local:8883
 
 At the bottom of the output, you should see the text "Verified (ok)".  Type a capital Q and hit enter to exit.
 
-
 ### Monitor our IoT Hub
 
 We will monitor the messages that will be flowing from our IoT Device to IoT Hub using the azure CLI.  

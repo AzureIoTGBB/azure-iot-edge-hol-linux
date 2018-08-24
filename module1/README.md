@@ -4,21 +4,21 @@ Created and maintained by the Microsoft Azure IoT Global Black Belts
 
 ## Set up Ubuntu VM in Azure
 
-As mentioned, for this lab instance, we are going to leverage a VM running in Azure as our Edge device.  It will take a few minutes to create the VM, so we'll start that process and do some other prep work while it builds.  To get started, 
+As mentioned, for this lab instance, we are going to leverage a VM running in Azure as our Edge device.  It will take a few minutes to create the VM, so we'll start that process and do some other prep work while it builds.  To get started,
 
-* open http://portal.azure.com in your browser and log in with your azure credentials (which may have been provided to you, if you are attending a live session)
+* open the [Azure Portal](http://portal.azure.com) in your browser and log in with your azure credentials (which may have been provided to you, if you are attending a live session)
 * in the upper left corner of the portal, click "Create a resource"
 * In the search bar, search for "Ubuntu Server"
 * select the most recent version of Ubuntu Server"  (which as of this writing is "Ubuntu Server 18.04")
 * click "Create"
 * in the Basics blade
-    * give your VM a name
-    * choose a username you can remember
-    * for Authentication type, change the selection to "Password"
-    * enter a strong password that you can remember and confirm it
-    * for "Resource group", choose the default of "Create new" and enter a unique name for your Resource Group
-    * for "Location", pick a location near you  (if you don't care, the default of Central US is fine)
-    * click "ok"
+  * give your VM a name
+  * choose a username you can remember
+  * for Authentication type, change the selection to "Password"
+  * enter a strong password that you can remember and confirm it
+  * for "Resource group", choose the default of "Create new" and enter a unique name for your Resource Group
+  * for "Location", pick a location near you  (if you don't care, the default of Central US is fine)
+  * click "ok"
 * In the "Size" blade, choose a size for your VM.  Any size will work, but we would recommend at least 4GB of RAM (8GB would be better)
 * In the "Settings" blade, leave all the defaults and hit "Ok"
 * On the summary blade, review the details and legalese and, if you agree, click "Create"
@@ -43,6 +43,7 @@ While you can use the GUI to create an IoT Hub, for expediency, we are going to 
 ``` bash
 az iot hub show-connection-string --name [your iothub name]
 ```
+
 * open Notepad and copy/paste the connection string value (without the quotes).  We will call this (for later use) the "IoTHub Owner Connection String"
 
 ### Create the Edge device
@@ -102,11 +103,12 @@ We will continue to use the Azure cloud shell CLI to create our container regist
 ```bash
 az acr create --resource-group [resouce group] --name [container registry name] --sku Basic
 ```
+
 * for [resource group], use the same resource group name created earlier.  For [container registry name], create a unique name for your container registry.  The name will be used in the URI of our registry (in the form of [registryname].azurecr.io), so use a URI friendly name, preferably lower case and no spaces
 
 the next step, we will need to gather our container registry credentials.  To gather the credentials, execute the following commands
 
-```
+```bash
 az acr update -n [container registry name] --admin-enabled true
 az acr credential show --name [container registry name]
 ```
@@ -158,11 +160,11 @@ To install IoT Edge in quick start mode, follow the instructions [here](https://
 There are a few final steps needed to set up our specific lab scenario.  We are using our Edge device *as a gateway*, so we need a) our IoT Device to be able to find it and b) to have valid certificates so the IoT Device will open a successful TLS connection to the Edge
 
 * Add a host file entry for our Edge device -- this will let our "IoT Device" resolve and find our Edge gateway.  To do this:
-    * run 'sudo nano /etc/hosts'
-        * add a row at the bottom with the following
-        * 127.0.0.1  mygateway.local
-    * save and close the file  (CTRL-O, CTRL-X)
-    * confirm you can successfully "ping mygateway.local"
+  * run 'sudo nano /etc/hosts'
+    * add a row at the bottom with the following
+    * 127.0.0.1  mygateway.local
+  * save and close the file  (CTRL-O, CTRL-X)
+  * confirm you can successfully "ping mygateway.local"
 
 * clone the Azure IoT C SDK (we need it to get to some "convenience scripts for generating our certificates).  From your "home" directory on your VM, run
 
@@ -175,6 +177,7 @@ When a 'downstream' device connects to IoT Hub, it will do so over a TLS connect
 To generate these certificates:
 
 from the bash command prompt
+
 * make an 'edge' folder   (mkdir edge)
 * cd to the edge folder (cd edge)
 * we need to copy the cert scripts here, so run these commands
@@ -247,7 +250,7 @@ The first step is to edit the config.yaml file to tell Edge to use our certifica
 
 * Edit the config.yaml file
 
-```
+```bash
 sudo nano /etc/iotedge/config.yaml
 ```
 
@@ -285,7 +288,7 @@ sudo rm -rf /var/lib/iotedge/hsm/cert_keys
 
 * restart IoT Edge
 
-```
+```bash
 sudo systemctl restart iotedge
 ```
 
@@ -299,7 +302,7 @@ sudo systemctl status iotedge
 
 the status should be "active (running)".   CTRL-C to exit
 
-You can see the status of the docker images by running 
+You can see the status of the docker images by running
 
 ```bash
 sudo docker ps

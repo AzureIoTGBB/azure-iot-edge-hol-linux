@@ -27,7 +27,7 @@ dotnet new aziotedgemodule -n formattermodule
 
 This will create a folder under edge called 'formattermodule'.  A number of nice things were generated for us, including a skeleton implementation of an IoT Edge Module.  So see this sample implementation, open Program.cs in your favorite Linux editor  (if you don't have a favorite, use nano)
 
-```
+```bash
 cd formattermodule
 nano Program.cs
 ```
@@ -105,12 +105,12 @@ using Newtonsoft.Json;
 ```
 
 * the code above does the following things
-    * some rudimentary checking to make sure we have a message in the right format
-    * disassembles the humidity and temp values from the CSV input
-    * creates a new message using these values and serializes as JSON
-    * copies any user-defined metadata properties from the original input message to the new message
-    * send the message back out to the hub on named output
-    * marks the original message as "complete" so that the Hub knows we successfully processed it and it does not need to be re-sent
+  * some rudimentary checking to make sure we have a message in the right format
+  * disassembles the humidity and temp values from the CSV input
+  * creates a new message using these values and serializes as JSON
+  * copies any user-defined metadata properties from the original input message to the new message
+  * send the message back out to the hub on named output
+  * marks the original message as "complete" so that the Hub knows we successfully processed it and it does not need to be re-sent
 
 To save the Program.cs file, hit CTRL-O and then CTRL-X to exit.
 
@@ -164,20 +164,20 @@ In this section, we will get the module created above deployed and view the resu
 
 * in the Azure portal, navigate to your IoT Hub, click on IoT Edge Devices (preview) on the left nav, click on your IoT Edge device
 * click on "Set Modules" in the top menu bar.  
-* In the Set Modules blade, 
-    * We need to give the edgeAgent the right credentials to access our repo in order to pull the docker image for our module at run-time.  In the "Container Registry Settings" section at the top, fill in the following fields
-        * Name:   [your docker user name]    (i.e. the short name of your azure container registry repo)
-        * Address:  [your docker repo]   (i.e. the long name)
-        * User Name:   same as "Name" above
-        * Password:  the cryptographic password of your azure container repo
-    * In the Deployment Modules section, click on "Add", and then "IoT Edge Module"
-    * In the "IoT Edge Modules" dialog, give your module a name (for example:  formattermodule).  Remember the name you used, including the proper 'case' of the letters, as we'll need that when we set the routes in the next step.
-    * in the image URI box, put in the exact same image name you used in the previous step (e.g. [your docker repo]/formattermodule:0.0.1-amd64)
-    * leave the other defaults and click "Save"
+* In the Set Modules blade,
+  * We need to give the edgeAgent the right credentials to access our repo in order to pull the docker image for our module at run-time.  In the "Container Registry Settings" section at the top, fill in the following fields
+    * Name:   [your docker user name]    (i.e. the short name of your azure container registry repo)
+    * Address:  [your docker repo]   (i.e. the long name)
+    * User Name:   same as "Name" above
+    * Password:  the cryptographic password of your azure container repo
+  * In the Deployment Modules section, click on "Add", and then "IoT Edge Module"
+  * In the "IoT Edge Modules" dialog, give your module a name (for example:  formattermodule).  Remember the name you used, including the proper 'case' of the letters, as we'll need that when we set the routes in the next step.
+  * in the image URI box, put in the exact same image name you used in the previous step (e.g. [your docker repo]/formattermodule:0.0.1-amd64)
+  * leave the other defaults and click "Save"
 * back on the "Set Modules" blade, click "next"
 * on the "specify routes" blade, replace the default with the following:
 
-```
+```json
 {
     "routes": {
         "toFormatterFromDevices": "FROM /messages/* WHERE NOT IS_DEFINED($connectionModuleId) INTO BrokeredEndpoint(\"/modules/formattermodule/inputs/input1\")",
@@ -185,10 +185,11 @@ In this section, we will get the module created above deployed and view the resu
     }
 }
 ```
+
 * replace "formattermodule" above (in two places) with the name of your module, case-sensitive, that you used above if it was different than 'formattermodule'
 
-    * the first route above, takes any message that does not come from a "module" and routes it into the input of our Formatter Module.  In other words, it takes messages that comes from downstream IoT devices and routes them into our formatter module.  It also keeps messages that comes from our formatter module from being routed back into itself.
-    * the second route takes the output from our Formatter Module and routes it up to IoT Hub in the cloud
+  * the first route above, takes any message that does not come from a "module" and routes it into the input of our Formatter Module.  In other words, it takes messages that comes from downstream IoT devices and routes them into our formatter module.  It also keeps messages that comes from our formatter module from being routed back into itself.
+  * the second route takes the output from our Formatter Module and routes it up to IoT Hub in the cloud
 
 * Click "next" and then "finish" in the Azure portal
 

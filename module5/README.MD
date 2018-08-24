@@ -30,6 +30,7 @@ This will create a folder under edge called 'alertmodule'.  A number of nice thi
 Now lets modify the sample code to implement our Alert module.
 
 TODO:   pretty sure this isnt' needed any more...
+
 * in addition to the "Device Client" that other modules use, the Alerts sample also needs to use the "Service Client" to send Direct Method calls.  To add the service client, do the following:
 
 ```bash
@@ -66,11 +67,13 @@ using TransportType = Microsoft.Azure.Devices.Client.TransportType;  TODO:  remo
 * at the top of the "Program" class (just below the line that reads "static int counter"), add the following code
 
 TODO:  remove??
+
 ```CSharp
 static ServiceClient ioTServiceClient;
 ```
 
 TODO:  remove?
+
 * In the Init function, right below the call to DeviceClient.CreateFromConnectionString, add this call
 
 ```CSharp
@@ -116,10 +119,10 @@ catch(Exception e)
 ```
 
 * the code above does the following things
-    * Receives the "Alert" message passed to use from Stream Analytics on the Edge
-    * parses the JSON message into an Alert object (technically, ASA passes us a JSON array of only one element, so we take the 'first' element)
-    * pulls out the device ID of the device that caused the alert, and figures out, based on the 'tempstate' (HIGH or LOW) whether to send the "ON" or "OFF" command to the device
-    * using the ServiceClient object, makes the Direct Method call.
+  * Receives the "Alert" message passed to use from Stream Analytics on the Edge
+  * parses the JSON message into an Alert object (technically, ASA passes us a JSON array of only one element, so we take the 'first' element)
+  * pulls out the device ID of the device that caused the alert, and figures out, based on the 'tempstate' (HIGH or LOW) whether to send the "ON" or "OFF" command to the device
+  * using the ServiceClient object, makes the Direct Method call.
 
 Save and close the Program.cs file with CTRL-O, \<enter>, CTRL-X
 
@@ -165,9 +168,9 @@ In this section, we will get the module created above deployed and view the resu
 * in the Azure portal, navigate to your IoT Hub, click on IoT Edge Devices (preview) on the left nav, click on your IoT Edge device
 * click on "Set Modules" in the top menu bar.  
 * In the Set Modules blade, click on "Add", and then "IoT Edge Module"
-    * In the "IoT Edge Modules" dialog, give your module a name (for example:  alertmodule).  Remember the name you used, including the proper 'case' of the letters, as we'll need that when we set the routes in the next step.
-    * in the image URI box, put in the exact same image name you used in the previous step (e.g. [your docker repo]/alertmodule:0.0.1-amd64)
-    * leave the other defaults and click "Save"
+  * In the "IoT Edge Modules" dialog, give your module a name (for example:  alertmodule).  Remember the name you used, including the proper 'case' of the letters, as we'll need that when we set the routes in the next step.
+  * in the image URI box, put in the exact same image name you used in the previous step (e.g. [your docker repo]/alertmodule:0.0.1-amd64)
+  * leave the other defaults and click "Save"
 * back on the "Set Modules" blade, click "next"
 * on the "specify routes" blade, replace the default with the following:
 
@@ -182,10 +185,11 @@ In this section, we will get the module created above deployed and view the resu
   }
 }
 ```
+
 * replace "alertmodule" above (in two places) with the name of your module, case-sensitive, that you used above if it was different than 'alertmodule'
 
-    * the first route above, takes any message that does not come from a "module" and routes it into the input of our Formatter Module.  In other words, it takes messages that comes from downstream IoT devices and routes them into our formatter module.  It also keeps messages that comes from our formatter module from being routed back into itself.
-    * the second route takes the output from our Formatter Module and routes it up to IoT Hub in the cloud
+  * the first route above, takes any message that does not come from a "module" and routes it into the input of our Formatter Module.  In other words, it takes messages that comes from downstream IoT devices and routes them into our formatter module.  It also keeps messages that comes from our formatter module from being routed back into itself.
+  * the second route takes the output from our Formatter Module and routes it up to IoT Hub in the cloud
 
 * Click "next" and then "finish" in the Azure portal
 
@@ -193,7 +197,7 @@ In this section, we will get the module created above deployed and view the resu
 
 After a few seconds, the module should be downloaded and deployed to our IoT Edge runtime.  You can confirm this on the edge device by running "docker ps".  You should see all of the previous modules running, the edgeAgent, edgeHub, the formatterModule, the ASA module and our new AlertModule.  You can view the logs of any of them by running "docker logs -f [module name]" to make sure they are working.
 
-As in the previous module, start the .NET Core app or python script that represents our IoT Device to get messages flowing into the system. 
+As in the previous module, start the .NET Core app or python script that represents our IoT Device to get messages flowing into the system.
 
 Once that is running, you can use "docker logs -f alertmodule" (or whatever you named your module) to see its logs.  You won't see anything yet.
 

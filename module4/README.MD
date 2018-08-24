@@ -73,7 +73,7 @@ FROM
         END as tempState,
         System.Timestamp as eventdatetime
     FROM inputFromHub
-    WHERE 
+    WHERE
             temperature IS NOT NULL
 ) x
 WHERE
@@ -95,11 +95,11 @@ In order to deploy our ASA job to Edge, the first step we need to do is to creat
 To create a storage account:
 
 * in the Azure portal, navigate to "Storage accounts" on the left-hand nav and click "Add"
-    * give the account a name (which has to be globally unique)
-    * for resource group, use the same one we used for the ASA job and IoT Hub
-    * leave all the other settings at default and click "Create"
-    * after the account gets created, navigate to it and click "Browse Blobs"
-    * Create a new container (give it a name) and for access, choose "Container" level and select "Ok"
+  * give the account a name (which has to be globally unique)
+  * for resource group, use the same one we used for the ASA job and IoT Hub
+  * leave all the other settings at default and click "Create"
+  * after the account gets created, navigate to it and click "Browse Blobs"
+  * Create a new container (give it a name) and for access, choose "Container" level and select "Ok"
 
 * Now return to your ASA job and click on the "IoT Edge Settings" tab.
 * Select your storage account and container that you just created and click Save.
