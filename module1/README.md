@@ -215,32 +215,23 @@ cat ./certs/new-edge-device.cert.pem ./certs/azure-iot-test-only.intermediate.ce
 
 In order for our end IoT Device to connect to the gateway, it needs to trust the certs we just generated.  To do so, we need to install that cert.  To install it,
 
-# TODO:  can we switch to the PG's instructions??
-
 * run the following commands
 
 ```bash
 cd ~/edge/certs
 
-openssl x509 -in azure-iot-test-only.root.ca.cert.pem -inform PEM -out azure-iot-test-only.root.ca.cert.crt
+sudo cp azure-iot-test-only.root.ca.cert.pem  /usr/local/share/ca-certificates/azure-iot-test-only.root.ca.cert.pem.crt
 
-sudo mkdir /usr/share/ca-certificates/extra
-
-sudo cp azure-iot-test-only.root.ca.cert.crt /usr/share/ca-certificates/extra/azure-iot-test-only.root.ca.cert.crt
-
-sudo dpkg-reconfigure ca-certificates
+sudo update-ca-certificates
 ```
 
-* with the last command, you will get a screen warning about installing certs to the root store.  Ensure that "yes" is highlighted and hit \<enter> to pick "Ok"
-* on the next screen, you'll be presented a list of certs that will be installed.  Make sure there is a "*" next to the azure iot cert from above (there probably is not, so hit the \<space bar> to toggle one on), then hit \<tab> to move to the "Ok" button, and hit \<enter>
-
-if you want to double check to see if the certs were installed, run
+If you want to double check that the certs got installed, run
 
 ```bash
-sudo cat /etc/ca-certificates.conf
+sudo ls /etc/ssl/certs/ | grep azure
 ```
 
-at the bottom of the file, you should see "extra/azure-iot-test-only.root.ca.cert.crt"
+You should see 'azure-iot-test-only.root.ca.cert.pem' returned.
 
 ## Update IoT Edge configuration
 

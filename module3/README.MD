@@ -82,6 +82,12 @@ using Newtonsoft.Json;
                 // humidity is first, temp second
                 string[] parts = messageString.Split(",");
 
+                string devId = "DeviceIdMissing";
+
+                // retrieve the device ID of the sending leaf device and insert into message
+                if(!string.IsNullOrEmpty(message.ConnectionDeviceId))
+                        devId = message.ConnectionDeviceId;
+
                 // create and populate our new message content
                 Telemetry t = new Telemetry();
                 t.deviceID = message.ConnectionDeviceId;

@@ -35,8 +35,6 @@ Open Program.cs to edit   (nano Program.cs)
 
 ```CSharp
 using Newtonsoft.Json;
-using Microsoft.Azure.Devices;
-using Message = Microsoft.Azure.Devices.Client.Message;
 ```
 
 * in Program.cs, above the "Program" class, add the C# class that will represent our message we want to publish to the Hub
@@ -78,7 +76,7 @@ else
 Console.WriteLine($"Invoking Direct Method to {alertMsg.deviceID} for tempState={alertMsg.tempState}");
 
 try {
-    var result = await moduleClient.InvokeDeviceMethodAsync(alertMsg.deviceID, new CloudToDeviceMethod(command));
+    var result = await moduleClient.InvokeMethodAsync(alertMsg.deviceID, new MethodRequest(command));
     Console.WriteLine($"Result status: {result.Status}");
 }
 catch(Exception e)
