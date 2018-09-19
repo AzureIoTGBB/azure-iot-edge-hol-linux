@@ -137,7 +137,7 @@ Once the code builds successfully, we are ready to build our docker image
 One of the nice things about our IoT Edge template is that it pregenerates the necessary "Dockerfile" to build our docker image.  That makes it simple for us to build.   It you like, you can review the Dockerfile by running
 
 ```bash
-cat ~/edge/formattermodule/Dockerfile
+cat ~/edge/formattermodule/Dockerfile.amd64
 ```
 
 Review the file and get a feel for what it's doing (which is essentially, starting from a base ".NET Core" image, copying over your code, building it, and setting it to run when the image is launched)
